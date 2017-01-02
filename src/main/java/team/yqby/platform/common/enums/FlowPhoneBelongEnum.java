@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 /**
- * 异常信息
+ * 手机号归属地标识
  * Author: luwanchuan
  * Date: 2017/1/2
  */
@@ -14,11 +14,10 @@ import lombok.ToString;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public enum ErrorCodeEnum {
+public enum FlowPhoneBelongEnum {
 
-    ILLEGAL_DATA("ILLEGAL_DATA", "亲，数据有误，请重新输入..."),
-    DATABASE_SELECT_IS_NULL("DATABASE_SELECT_IS_NULL", "亲，正在努力查询数据，请稍后..."),
-    SYSTEM_ERROR("SYSTEM_ERROR", "亲，系统维护中，请稍后...");
+    SH_0("0", "上海"),
+    NOT_SH_1("1", "非上海");
 
     private String code;
 
