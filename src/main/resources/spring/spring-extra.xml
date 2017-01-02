@@ -14,10 +14,16 @@
 
     <context:annotation-config/>
 
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="locations">
+            <list>
+                <value>classpath:properties/config.properties</value>
+            </list>
+        </property>
+    </bean>
+
     <!--数据库连接配置-->
-    <!--
     <import resource="classpath:spring/spring-datasource.xml"/>
-    -->
 
     <mvc:default-servlet-handler />
     <mvc:resources mapping="/resources/**" location="/resources/"/>
