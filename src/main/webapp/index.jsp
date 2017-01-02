@@ -5,10 +5,20 @@
 <link rel="stylesheet" href="${pageContext.request.contextPath}/css/common.css" type="text/css"/>
 <script src="${pageContext.request.contextPath}/js/msg-notify.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/jquery-1.8.0.min.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/ajaxfileupload.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/jquery.nice-file-input.min.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/tableExport.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/jquery.base64.js"></script>
 <script language='javascript'>
+    $('document').ready(function () {
+        $(".nicefile").niceFileInput({
+            'width': '500', //width of button - minimum 150
+            'height': '30',  //height of text
+            'btnText': '浏览', //text of the button
+            'btnWidth': '100',  // width of button
+            'margin': '20'	// gap between textbox and button - minimum 14
+        });
+    });
     var ws;
     function connectChatServer(filePath) {
         var localObj = window.location;
@@ -24,10 +34,12 @@
         };
 
         ws.onmessage = function (event) {
-                if(event.data == 'success'){
+            if (event.data.indexOf('&') > 0) {
+                $("#msg_title").text(event.data.split("&")[0]);
+                $("#msg_content").text(event.data.split("&")[1]);
                 document.getElementById('msg_win').style.display = "block";
                 Message.init();
-            }else{
+            } else {
                 setMessageInnerHTML(event.data);
             }
         }
@@ -40,10 +52,10 @@
         }
 
         ws.onclose = function () {
-            alert("Connection is closed...");
+            console.log("Connection is closed...");
         };
         ws.onerror = function (e) {
-            alert(e.msg);
+            console.log(e.msg);
         }
 
     }
@@ -74,6 +86,11 @@
     });
 
     function uploadFile() {
+        var reg = /^.*\.(?:xlsx)$/i;
+        if (!reg.test($("#upload").val())) {
+            alert("请上传xlsx格式的文件!");
+            return;
+        }
         $("table tbody tr").eq(0).nextAll().remove();
         var formData = new FormData();
         formData.append("file", $("#upload")[0].files[0]);
@@ -82,7 +99,6 @@
             type: 'POST',
             data: formData,
             async: false,
-            cache: false,
             contentType: false,
             processData: false,
             beforeSend: function () {
@@ -108,68 +124,57 @@
 <div style="text-align: center;">
     <H2 align="center">批量账单充值</H2>
     <HR width="80%"
-        style="border-width: 1px medium medium; border-style: dotted none none; border-color: rgb(24, 85, 152) currentColor currentColor; border-image: none; height: 1px;">
+        style="border-width: 1px medium medium; border-style: dotted none none; border-color: rgb(24, 85, 152); border-image: none; height: 1px;">
 </div>
 <div style="margin:15px 50px" align="center">
     <P style="text-align: center;"><span style="color: green; font-size: 13px;">提示：请选择xlsx格式的文件[账单条码/11888充值卡]</span>
     </P>
-    <input type="file" id="upload" name="file" class="nicefile"/>
 
+    <form id="uploadForm" enctype="multipart/form-data">
+        <input type="file" id="upload" name="file" class="nicefile"/>
+    </form>
 </div>
 <div style="text-align: center;">
     <input id="queryPay" type="submit" onclick="uploadFile()" class="ui blue submit button" value="提交">
 </div>
-<div style="text-align: center;">
-    <div style="text-align: right;width:92%">&nbsp;&nbsp;<input id="export"
-                                                                onclick="$('#PrintA').tableExport({ type: 'csv', separator: ';', escape: 'false' });"
-                                                                type="button" class="ui submit button" value="导出"
-                                                                style="background-color: #fff;"></div>
-    <div class="big2" style="margin: auto; width: 100%; height: 100px; overflow: hidden;">
-        <div class="small2" id="showMsg" style="margin: auto; width: 100%; height: 100px; -ms-overflow-y: auto;">
-            <table align="center" id="PrintA" border="1" cellspacing="0" cellpadding="0"
-                   style="border-collapse:collapse">
-                <tBody>
-                <tr>
-                    <th>订单号</th>
-                    <th>条码</th>
-                    <th>账单号</th>
-                    <th>账期</th>
-                    <th>金额(元)</th>
-                    <th>11888账号</th>
-                    <th>账户余额</th>
-                    <th>支付状态</th>
-                </tr>
-                <tr>
-                    <td colspan=8>无充值记录</td>
-                </tr>
-                </tBody>
-            </table>
-        </div>
+<div style="text-align: right;width:92%">&nbsp;&nbsp;<input id="export"
+                                                            onclick="$('#PrintA').tableExport({ type: 'csv', separator: ';', escape: 'false' });"
+                                                            type="button" class="ui submit button" value="导出"
+                                                            style="background-color: #fff;"></div>
+<div class="big2" style="margin: auto; width: 100%; height: 100px; overflow: hidden;">
+    <div class="small2" id="showMsg" style="margin: auto; width: 100%; height: 100px; -ms-overflow-y: auto;">
+        <table align="center" id="PrintA" border="1" cellspacing="0" cellpadding="0"
+               style="border-collapse:collapse">
+            <tBody>
+            <tr>
+                <th>订单号</th>
+                <th>条码</th>
+                <th>账单号</th>
+                <th>账期</th>
+                <th>金额(元)</th>
+                <th>11888账号</th>
+                <th>账户余额</th>
+                <th>支付状态</th>
+            </tr>
+            <tr>
+                <td colspan=8>无充值记录</td>
+            </tr>
+            </tBody>
+        </table>
     </div>
-    <HR width="80%"
-        style="border-width: 1px medium medium; border-style: dotted none none; border-color: rgb(24, 85, 152) currentColor currentColor; border-image: none; height: 1px;">
+</div>
+<hr width="80%"
+    style="border-width: 1px medium medium; border-style: dotted none none; border-color: rgb(24, 85, 152); border-image: none; height: 1px;"/>
 
-    <div style="text-align: center"><span style="color: rgb(24, 85, 152); font-size: 14px;">账单充值完成笔数：</span><span
-            id="showCount" style="color: green; font-size: 18px;">0</span></div>
-    <div id="msg_win" style="display:none;top:490px;visibility:visible;opacity:1;">
-        <div class="icos"><a id="msg_min" title="最小化" href="javascript:void 0">_</a><a id="msg_close" title="关闭"
-                                                                                       href="javascript:void 0">×</a>
-        </div>
-        <div id="msg_title">消息通知</div>
-        <div id="msg_content">已完成账单批量充值</div>
-        <!-- script -->
-        <script src="js/jquery.min.js"></script>
-        <script src="dist/jquery.nice-file-input.min.js"></script>
-        <script type="text/javascript">
-            $('document').ready(function () {
-                $(".nicefile").niceFileInput({
-                    'width': '500', //width of button - minimum 150
-                    'height': '30',  //height of text
-                    'btnText': '浏览', //text of the button
-                    'btnWidth': '100',  // width of button
-                    'margin': '20',	// gap between textbox and button - minimum 14
-                });
-            });
-        </script>
+<div style="text-align: center"><span style="color: rgb(24, 85, 152); font-size: 14px;">账单充值完成笔数：</span><span
+        id="showCount" style="color: green; font-size: 18px;">0</span></div>
+<div id="msg_win" style="display:none;top:490px;visibility:visible;opacity:1;">
+    <div class="icos"><a id="msg_min" title="最小化" href="javascript:void 0">_</a><a id="msg_close" title="关闭"
+                                                                                   href="javascript:void 0">×</a>
+    </div>
+    <div id="msg_title"></div>
+    <div id="msg_content"></div>
+</div>
+
 </body>
 </html>

@@ -1,8 +1,10 @@
 package team.yqby.platform.service;
 
 import com.alibaba.fastjson.JSON;
+import com.google.common.base.Joiner;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
+import org.assertj.core.condition.Join;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.TextMessage;
@@ -16,6 +18,7 @@ import team.yqby.platform.manager.PrepaidCardPayManager;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.Date;
 
 @Service
 @Slf4j
@@ -38,7 +41,9 @@ public class PrepaidCardPayService {
      * @param excelFilePath
      */
     public void batchDo(String excelFilePath, WebSocketSession session) throws IOException {
+        Date startDate = new Date();
         int payAccountIndex = 0;
+        int payTotalCount = 0;
         String[][] barCodeList = ExcelUtil.readExcel(excelFilePath, 0);
         for (int i = 0; i < barCodeList.length; i++) {
             //格式不满足继续下一条记录
@@ -50,15 +55,19 @@ public class PrepaidCardPayService {
 
             //2.查询账单
             BillResDto billResDto = queryBill(barCodeNo);
+            payTotalCount++;
             log.info("读取第{}条记录查询账单，条码:{},账单信息:{}", i + 1, barCodeNo, billResDto);
             if (StringUtils.isEmpty(billResDto.getStatus())) {
-                session.sendMessage(new TextMessage("条码:" + barCodeNo + "无未支付的账单或已支付成功过"));
-                log.info("条码:{} 无未支付的账单或已支付成功过", barCodeNo);
+                session.sendMessage(new TextMessage("条码" + barCodeNo + "无未支付的账单或已支付成功过"));
+                log.info("条码{} 无未支付的账单或已支付成功过", barCodeNo);
                 continue;
             }
             //3.下单支付
             createOrderAndPay(billResDto, excelFilePath, barCodeNo, payAccountIndex, session);
         }
+        Date endDate = new Date();
+        long interval = (startDate.getTime() - endDate.getTime()) / 1000;
+        session.sendMessage(new TextMessage(Joiner.on("&").join("通知", "已完成" + payTotalCount + "笔账单充值,花费时间" + interval + "秒")));
     }
 
 
@@ -139,6 +148,7 @@ public class PrepaidCardPayService {
 
                 if (payResult.contains("支付成功")) {
                     payStatus = "充值成功";
+                    paySuccessCount++;
                     accountBalance = accountBalance.subtract(billResDto.getAmount());
                 }
                 payCompleteFlag = true;

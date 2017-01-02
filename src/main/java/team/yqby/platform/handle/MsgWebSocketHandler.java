@@ -2,9 +2,7 @@ package team.yqby.platform.handle;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Service;
+import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
@@ -22,15 +20,21 @@ public class MsgWebSocketHandler extends TextWebSocketHandler {
 
     protected void handleTextMessage(WebSocketSession session, TextMessage message) {
 
-        String filePath = message.getPayload();
-        if (StringUtils.isEmpty(filePath)) return;
-        log.info("用户请求数据:{},你是第{}位访客", filePath, ++count);
+        String fileName = message.getPayload();
+        if (StringUtils.isEmpty(fileName)) return;
+        log.info("SOCKET用户请求文件名:{},当前用户总数:{}", fileName, ++count);
         try {
             PrepaidCardPayService prepaidCardPayService = (PrepaidCardPayService) SpringContextHelper.getBean("prepaidCardPayService");
-            prepaidCardPayService.batchDo(tableFilePath + filePath, session);
-            session.sendMessage(new TextMessage("success"));
+            prepaidCardPayService.batchDo(tableFilePath + fileName, session);
+
         } catch (IOException e) {
             log.error("handleTextMessage IOException,error,", e);
         }
+    }
+
+    @Override
+    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
+        ++count;
+        super.afterConnectionClosed(session, status);
     }
 }

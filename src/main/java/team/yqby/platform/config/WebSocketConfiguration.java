@@ -13,6 +13,6 @@ import team.yqby.platform.handle.MsgWebSocketHandler;
 @Configuration
 public class WebSocketConfiguration implements WebSocketConfigurer {
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(new MsgWebSocketHandler(), "/webSocket");
+        registry.addHandler(new MsgWebSocketHandler(), "/webSocket").setAllowedOrigins("*");
     }
 }
