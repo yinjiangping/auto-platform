@@ -148,7 +148,6 @@ public class PrepaidCardPayService {
 
                 if (payResult.contains("支付成功")) {
                     payStatus = "充值成功";
-                    paySuccessCount++;
                     accountBalance = accountBalance.subtract(billResDto.getAmount());
                 }
                 payCompleteFlag = true;
