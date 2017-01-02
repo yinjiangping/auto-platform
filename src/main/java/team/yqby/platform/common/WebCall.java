@@ -1,11 +1,7 @@
 package team.yqby.platform.common;
 
-import com.sun.xml.internal.ws.util.xml.XmlUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.httpclient.*;
-import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.http.*;
-import org.apache.http.NameValuePair;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
@@ -13,7 +9,6 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import team.yqby.platform.common.emodel.ServiceErrorCode;
-import team.yqby.platform.common.frontclient.IDispatchControlStub;
 import team.yqby.platform.common.util.OCRHelper;
 import team.yqby.platform.common.util.UrlUtil;
 import team.yqby.platform.exception.AutoPlatformException;
@@ -107,26 +102,33 @@ public class WebCall {
         return "";
     }
 
-    public static String xmlSyncSend(String wsAddress, String webSvrCode, String xml) throws AutoPlatformException {
-        String resultXml = "";
-        IDispatchControlStub.DispatchCommand param = new IDispatchControlStub.DispatchCommand();
-        IDispatchControlStub iDispatchControlStub = null;
-        param.setIn1(xml);
+    public static String xmlSyncSend(String wsAddress, String xml) throws AutoPlatformException {
+        String resXml = "";
         try {
-            log.info("webService Address requestUrl:{}", wsAddress);
-            log.info("webService Address requestXml:{}", xml);
-            iDispatchControlStub = new IDispatchControlStub(wsAddress);
-            IDispatchControlStub.DispatchCommandResponse dispatchCommandResponse = iDispatchControlStub.dispatchCommand(param);
-            resultXml = dispatchCommandResponse.getOut();
-            log.info("webService Address responseXml:{}", resultXml);
-        } catch (RemoteException e) {
-            log.error("send XML request  RemoteException:{}", e);
-            throw new AutoPlatformException(ServiceErrorCode.ERROR_CODE_F99999.getResCode(), ServiceErrorCode.ERROR_CODE_F99999.getResDesc());
+            //服务的地址
+            URL wsUrl = new URL(wsAddress);
+            HttpURLConnection conn = (HttpURLConnection) wsUrl.openConnection();
+            conn.setDoInput(true);
+            conn.setDoOutput(true);
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Type", "text/xml;charset=UTF-8");
+            OutputStream os = conn.getOutputStream();
+            os.write(xml.getBytes());
+            InputStream is = conn.getInputStream();
+            byte[] b = new byte[1024];
+            int len = 0;
+            while ((len = is.read(b)) != -1) {
+                String ss = new String(b, 0, len, "UTF-8");
+                resXml += ss;
+            }
+            is.close();
+            os.close();
+            conn.disconnect();
         } catch (Exception e) {
-            log.error("send XML request  RemoteException:{}", e);
+            log.error("send XML request  Exception:{}", e);
             throw new AutoPlatformException(ServiceErrorCode.ERROR_CODE_F99999.getResCode(), e.getMessage());
         }
-        return resultXml;
+        return resXml;
     }
 
     /**
