@@ -8,6 +8,7 @@ import team.yqby.platform.dto.model.FlowStock;
 import team.yqby.platform.dto.model.req.FlowOrderReq;
 import team.yqby.platform.dto.model.res.FlowOrderRes;
 import team.yqby.platform.manager.FlowRechargeManager;
+import team.yqby.platform.manager.FlowWeChatManager;
 
 import java.util.Date;
 
@@ -22,7 +23,7 @@ import java.util.Date;
 public class FlowRechargeService {
 
     @Autowired
-    private FlowRechargeManager flowRechargeManager;
+    private FlowWeChatManager flowWeChatManager;
 
     /***
      * 流量充值下单
@@ -31,9 +32,9 @@ public class FlowRechargeService {
      */
     public FlowOrderRes createOrder(FlowOrderReq flowOrderReq){
         //1.校验商品价格
-        FlowStock flowStock = flowRechargeManager.checkGoodsPrice(String.valueOf(flowOrderReq.getFlowID()),flowOrderReq.getFlowCurrentCost());
+        FlowStock flowStock = flowWeChatManager.checkGoodsPrice(String.valueOf(flowOrderReq.getFlowID()),flowOrderReq.getFlowCurrentCost());
         //2.支付下单
-        String orderNo = flowRechargeManager.createPayOrder(flowStock,flowOrderReq.getPhone(),flowOrderReq.getOpenID());
+        String orderNo = flowWeChatManager.createPayOrder(flowStock,flowOrderReq.getPhone(),flowOrderReq.getOpenID());
         //3.微信下单
 
         return null;
