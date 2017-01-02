@@ -53,9 +53,4 @@ public class FileUploadController {
 //        }
         return uploadFileName;
     }
-
-    public static void main(String[] args) {
-        int test = (int) ((Math.random() * 9 + 1) * 100000);
-        System.out.println(test);
-    }
 }

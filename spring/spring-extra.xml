@@ -10,16 +10,14 @@
       http://www.springframework.org/schema/mvc
       http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd">
     <!-- Spring自动扫描包 -->
-    <!--<context:component-scan base-package="team.yqby.platform"/>-->
-    <context:component-scan base-package="team.yqby.platform" use-default-filters="false" />
+    <context:component-scan base-package="team.yqby.platform" use-default-filters="false"/>
     <mvc:annotation-driven/>
     <!--注解说明-->
     <!--<context:annotation-config/>-->
 
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-        <property name="prefix" value="/WEB-INF/jsp/" />
-        <property name="suffix" value=".jsp" />
+        <property name="prefix" value="/WEB-INF/jsp/"/>
+        <property name="suffix" value=".jsp"/>
     </bean>
-
 
 </beans>

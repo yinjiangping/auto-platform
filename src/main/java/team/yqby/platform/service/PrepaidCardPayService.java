@@ -66,7 +66,7 @@ public class PrepaidCardPayService {
             createOrderAndPay(billResDto, excelFilePath, barCodeNo, payAccountIndex, session);
         }
         Date endDate = new Date();
-        long interval = (startDate.getTime() - endDate.getTime()) / 1000;
+        long interval = (endDate.getTime() - startDate.getTime()) / 1000;
         session.sendMessage(new TextMessage(Joiner.on("&").join("通知", "已完成" + payTotalCount + "笔账单充值,花费时间" + interval + "秒")));
     }
 
