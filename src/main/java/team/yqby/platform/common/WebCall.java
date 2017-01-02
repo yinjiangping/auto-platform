@@ -105,6 +105,8 @@ public class WebCall {
     public static String xmlSyncSend(String wsAddress, String xml) throws AutoPlatformException {
         String resXml = "";
         try {
+            log.info("webService Address requestUrl:{}", wsAddress);
+            log.info("webService Address requestXml:{}", xml);
             //服务的地址
             URL wsUrl = new URL(wsAddress);
             HttpURLConnection conn = (HttpURLConnection) wsUrl.openConnection();
@@ -124,6 +126,7 @@ public class WebCall {
             is.close();
             os.close();
             conn.disconnect();
+            log.info("webService Address responseXml:{}", resXml);
         } catch (Exception e) {
             log.error("send XML request  Exception:{}", e);
             throw new AutoPlatformException(ServiceErrorCode.ERROR_CODE_F99999.getResCode(), e.getMessage());

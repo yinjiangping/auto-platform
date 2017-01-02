@@ -215,6 +215,11 @@
             <artifactId>commons-httpclient</artifactId>
             <version>3.1</version>
         </dependency>
+        <dependency>
+            <groupId>com.thoughtworks.xstream</groupId>
+            <artifactId>xstream</artifactId>
+            <version>1.4.4</version>
+        </dependency>
         <!--<dependency>-->
             <!--<groupId>org.apache.axis2</groupId>-->
             <!--<artifactId>axis2-adb</artifactId>-->

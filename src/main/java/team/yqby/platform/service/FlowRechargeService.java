@@ -36,7 +36,7 @@ public class FlowRechargeService {
         //2.支付下单
         String orderNo = flowWeChatManager.createPayOrder(flowStock,flowOrderReq.getPhone(),flowOrderReq.getOpenID());
         //3.微信下单
-
+        flowWeChatManager.createWeChatOrder(flowOrderReq.getOpenID(),orderNo,flowOrderReq.getFlowCurrentCost());
         return null;
     }
 }
