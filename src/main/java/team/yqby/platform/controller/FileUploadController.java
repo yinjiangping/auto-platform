@@ -3,11 +3,12 @@ package team.yqby.platform.controller;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.Date;
 import java.util.List;
 
 import com.google.common.base.Joiner;
-import com.huateng.util.DateUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.client.utils.DateUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -39,7 +40,7 @@ public class FileUploadController {
         String name = file.getName();
         if (!file.isEmpty()) {
             try {
-                uploadFileName = Joiner.on("_").join(DateUtil.getDateyyyyMMddHHmmss(), (int) ((Math.random() * 9 + 1) * 100000), "billFile.xlsx");
+                uploadFileName = Joiner.on("_").join(DateUtils.formatDate(new Date(), "YYMMDD"), (int) ((Math.random() * 9 + 1) * 100000000), "billFile.xlsx");
                 byte[] bytes = file.getBytes();
                 BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(new File(filePath + uploadFileName)));
                 stream.write(bytes);
