@@ -126,6 +126,8 @@ public class FlowWeChatManager {
             log.error("createWeChatOrder AutoPlatformException error,", e);
             throw new AutoPlatformException(e.getCode(), e.getMessage());
         } catch (Exception e) {
+            //下单失败
+            updateOrderStatus(orderNo, TransStatusEnum.ORDER_FAIL.getStatus());
             log.error("createWeChatOrder AutoPlatformException error,", e);
             throw new AutoPlatformException(ServiceErrorCode.ERROR_CODE_A10003.getResCode(), e.getMessage());
         }
@@ -133,19 +135,21 @@ public class FlowWeChatManager {
 
     /**
      * 更新交易状态
+     *
      * @param orderNo
      * @param transStatus
      */
-    public void updateOrderStatus(String orderNo,String transStatus){
+    public void updateOrderStatus(String orderNo, String transStatus) {
         FlowOrder flowOrder = new FlowOrder();
         flowOrder.setTransStatus(transStatus);
         FlowOrderExample flowOrderExample = new FlowOrderExample();
         flowOrderExample.createCriteria().andOrderIdEqualTo(orderNo).andArchiveFlagEqualTo(ArchiveFlagEnum.STR_0.getCode());
-        flowOrderMapper.updateByExample(flowOrder,flowOrderExample);
+        flowOrderMapper.updateByExample(flowOrder, flowOrderExample);
     }
 
-    /***
+    /**
      * 下单结果转换
+     *
      * @param weChatXmlUtil
      * @return
      */
@@ -160,7 +164,7 @@ public class FlowWeChatManager {
         try {
             flowOrderRes.setPaySign(WeChatXmlUtil.getSign(BeanToMapUtil.convertBean(flowOrderRes), PublicConfig.MCH_KEY));
         } catch (Exception e) {
-            log.error("resultConversion exception,error",e);
+            log.error("resultConversion exception,error", e);
             throw new AutoPlatformException(ServiceErrorCode.ERROR_CODE_A10003.getResCode(), e.getMessage());
         }
         return flowOrderRes;
