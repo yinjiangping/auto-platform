@@ -16,10 +16,13 @@ import team.yqby.platform.dto.model.FlowOrder;
 import team.yqby.platform.dto.model.FlowStock;
 import team.yqby.platform.dto.model.FlowStockExample;
 import team.yqby.platform.dto.model.inner.WeChatCreateOrder;
+import team.yqby.platform.dto.model.res.FlowOrderRes;
 import team.yqby.platform.exception.AutoPlatformException;
 import team.yqby.platform.mapper.FlowOrderMapper;
 import team.yqby.platform.mapper.FlowStockMapper;
 
+import java.beans.IntrospectionException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
 import java.util.List;
 
@@ -68,7 +71,7 @@ public class FlowWeChatManager {
     public String createPayOrder(FlowStock flowStock, String productNo, String openID) {
         FlowOrder flowOrder = new FlowOrder();
         flowOrder.setOrderId(DateUtils.formatDate(new Date(), "YYMMDDHHMMSSs" + (int) ((Math.random() * 9 + 1) * 100)));
-        flowOrder.setOrderTime(DateUtils.parseDate(DateUtils.formatDate(new Date(), "YYMMDDHHMMSS")));
+        flowOrder.setOrderTime(new Date());
         flowOrder.setFlowId(Long.valueOf(flowStock.getFlowId()));
         flowOrder.setOriginalCost(flowStock.getFlowOriginalCost());
         flowOrder.setCurrentCost(flowStock.getFlowCurrentCost());
@@ -87,11 +90,12 @@ public class FlowWeChatManager {
         return flowOrder.getOrderId();
     }
 
-    /***
+    /**
      * 微信下单
-     * @param openId  用户编号
+     *
+     * @param openId   用户编号
      * @param orderNo  订单号
-     * @param orderAmt  订单金额
+     * @param orderAmt 订单金额
      * @return
      * @throws AutoPlatformException
      * @throws Exception
@@ -101,14 +105,15 @@ public class FlowWeChatManager {
             WeChatCreateOrder weChatCreateOrder = new WeChatCreateOrder();
             weChatCreateOrder.setAppid(PublicConfig.APP_ID);
             weChatCreateOrder.setMch_id(PublicConfig.MCH_ID);
-            weChatCreateOrder.setBody("商户-流量充值");
+            weChatCreateOrder.setBody("德翼-流量充值");
             weChatCreateOrder.setNonce_str(MD5Util.MD5Encode(Joiner.on("&").join(orderNo, PublicConfig.MCH_KEY)));
             weChatCreateOrder.setNotify_url(PublicConfig.PAY_NOTIFY_URL);
             weChatCreateOrder.setOpenid(openId);
             weChatCreateOrder.setOut_trade_no(orderNo);
             weChatCreateOrder.setSpbill_create_ip(IPUtil.getLocalIP());
             weChatCreateOrder.setTotal_fee(orderAmt);
-            weChatCreateOrder.setTrade_type("JSAPI");
+//            weChatCreateOrder.setTrade_type("JSAPI"); TODO 微信使用此交易类型
+            weChatCreateOrder.setTrade_type("NATIVE");
             weChatCreateOrder.setSign(WeChatXmlUtil.getSign(BeanToMapUtil.convertBean(weChatCreateOrder), PublicConfig.MCH_KEY));
             String requestXml = WeChatXmlUtil.toXml(weChatCreateOrder).replace("__", "_");
             String responseXml = WebCall.xmlSyncSend(PublicConfig.WX_CREATE_ORDER_URL, requestXml);
@@ -123,4 +128,26 @@ public class FlowWeChatManager {
         }
     }
 
+
+    /***
+     * 下单结果转换
+     * @param weChatXmlUtil
+     * @return
+     */
+    public FlowOrderRes resultConversion(WeChatXmlUtil weChatXmlUtil) {
+        String packageStr = Joiner.on("=").join("prepay_id", weChatXmlUtil.getPrepay_id());
+        FlowOrderRes flowOrderRes = new FlowOrderRes();
+        flowOrderRes.setAppId(weChatXmlUtil.getAppid());
+        flowOrderRes.setTimeStamp(System.currentTimeMillis());
+        flowOrderRes.setNonceStr(MD5Util.MD5Encode(Joiner.on("&").join(weChatXmlUtil.getPrepay_id(), PublicConfig.MCH_KEY)));
+        flowOrderRes.setPack_age(packageStr);
+        flowOrderRes.setSignType("MD5");
+        try {
+            flowOrderRes.setPaySign(WeChatXmlUtil.getSign(BeanToMapUtil.convertBean(flowOrderRes), PublicConfig.MCH_KEY));
+        } catch (Exception e) {
+            log.error("resultConversion exception,error",e);
+            throw new AutoPlatformException(ServiceErrorCode.ERROR_CODE_A10003.getResCode(), e.getMessage());
+        }
+        return flowOrderRes;
+    }
 }

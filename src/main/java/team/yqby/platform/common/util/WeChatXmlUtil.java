@@ -108,13 +108,13 @@ public class WeChatXmlUtil {
     }
 
     public static String getSign(Map<String, String> params, String key) {
-        Map<String, String> sortMap = new TreeMap<String, String>();
+        Map<String, Object> sortMap = new TreeMap<String, Object>();
         sortMap.putAll(params);
         StringBuilder builder = new StringBuilder();
-        for (Map.Entry<String, String> s : sortMap.entrySet()) {
+        for (Map.Entry<String, Object> s : sortMap.entrySet()) {
             String k = s.getKey();
-            String v = s.getValue();
-            if (StringUtils.isBlank(v)) {
+            Object v = s.getValue();
+            if (StringUtils.isBlank(String.valueOf(v))) {
                 continue;
             }
             builder.append(k).append("=").append(v).append("&");

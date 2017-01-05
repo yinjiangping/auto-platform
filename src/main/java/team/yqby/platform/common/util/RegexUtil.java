@@ -26,17 +26,7 @@ public class RegexUtil {
 
     public static final String number_8_regex="[0-9]{8,}";
 
-    //短信验证码
-    public static final String vailCode_regex = "[0-9]{6}";
 
-    //图片验证码
-    public static final String imageCode_regex = "[0-9a-zA-Z]{4,6}";
-
-    //申请验证码类型
-    public static final String authChannel_regex = "^[0-9]{1,2}$";
-
-    //图片验证码格式
-    public static final String FTP_IMAGE_TYPE = ".bmp|.jpg|.jpeg|.gif|.png|.JPG|.GIF|.JPEG|.PNG|.BMP";
 
     /**
      * @param inputStr 需要验证的参数

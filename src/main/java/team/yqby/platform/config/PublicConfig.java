@@ -16,8 +16,7 @@ public class PublicConfig {
 
     public static final String MCH_ID = "1399957902";
 
-    //TODO 待测试
-    public static final String MCH_KEY = "11111111111111111";
+    public static final String MCH_KEY = "3NqEIbED5ijAO3QdX8K1vfvHAUEjcliu";
 
     public static final String WX_CREATE_ORDER_URL = "https://api.mch.weixin.qq.com/pay/unifiedorder";
 

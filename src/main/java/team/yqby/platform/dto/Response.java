@@ -3,6 +3,7 @@ package team.yqby.platform.dto;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import team.yqby.platform.common.emodel.ServiceErrorCode;
 
 /**
  * <p>
@@ -23,6 +24,12 @@ public class Response<T> {
         this.success = false;
         this.errorCode = errorCode;
         this.errorMsg = errorMsg;
+    }
+
+    public Response(ServiceErrorCode serviceErrorCode) {
+        this.success = false;
+        this.errorCode = serviceErrorCode.getResCode();
+        this.errorMsg = serviceErrorCode.getResDesc();
     }
 
     public Response(T result) {
