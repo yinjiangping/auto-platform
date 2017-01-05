@@ -42,7 +42,7 @@
     </bean>
 
     <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-        <property name="basePackage" value="team.yqby.sign.mapper" />
+        <property name="basePackage" value="team.yqby.platform.mapper" />
         <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
     </bean>
 

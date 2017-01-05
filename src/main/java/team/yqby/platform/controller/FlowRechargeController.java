@@ -1,5 +1,6 @@
 package team.yqby.platform.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.google.common.base.Throwables;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.utils.DateUtils;
@@ -8,6 +9,7 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 import team.yqby.platform.common.emodel.ServiceErrorCode;
 import team.yqby.platform.common.util.ParamsValidate;
+import team.yqby.platform.config.ApiUrls;
 import team.yqby.platform.dto.Response;
 import team.yqby.platform.dto.model.req.FlowOrderReq;
 import team.yqby.platform.dto.model.res.FlowOrderRes;
@@ -23,7 +25,7 @@ public class FlowRechargeController {
     @Autowired
     private FlowRechargeService flowRechargeService;
 
-    @RequestMapping(value = "/order", method = RequestMethod.POST)
+    @RequestMapping(value = ApiUrls.FLOW_CREATE_ORDER_URL, method = RequestMethod.POST)
     public
     @ResponseBody
     Response<FlowOrderRes> createOrder(@Valid @RequestBody FlowOrderReq flowOrderReq, Errors errors) {

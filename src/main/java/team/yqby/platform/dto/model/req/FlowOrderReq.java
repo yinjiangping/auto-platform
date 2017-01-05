@@ -30,7 +30,7 @@ public class FlowOrderReq extends FlowBaseInfo {
 
     /** 流量编号 */
     @NotNull(message="流量编号不能为空")
-    private Long flowID;
+    private String flowID;
 
     /** 现价 */
     @NotNull(message="现价不能为空")

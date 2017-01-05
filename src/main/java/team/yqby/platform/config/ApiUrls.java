@@ -27,4 +27,7 @@ public class ApiUrls {
     /**    支付订单  **/
     public static final String ORDER_PAY_URL="/service/billRecharge/doSelect.jhtml";
 
+    //创建流量订单
+    public static final String FLOW_CREATE_ORDER_URL="/order";
+
 }

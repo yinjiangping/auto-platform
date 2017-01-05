@@ -2,17 +2,17 @@ package team.yqby.platform.manager;
 
 import com.google.common.base.Joiner;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.http.client.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import team.yqby.platform.common.WebCall;
 import team.yqby.platform.common.emodel.ServiceErrorCode;
-import team.yqby.platform.common.util.BeanToMapUtil;
-import team.yqby.platform.common.util.IPUtil;
-import team.yqby.platform.common.util.MD5Util;
-import team.yqby.platform.common.util.WeChatXmlUtil;
+import team.yqby.platform.common.enums.ArchiveFlagEnum;
+import team.yqby.platform.common.enums.CheckStatusEnum;
+import team.yqby.platform.common.enums.TransStatusEnum;
+import team.yqby.platform.common.util.*;
 import team.yqby.platform.config.PublicConfig;
 import team.yqby.platform.dto.model.FlowOrder;
+import team.yqby.platform.dto.model.FlowOrderExample;
 import team.yqby.platform.dto.model.FlowStock;
 import team.yqby.platform.dto.model.FlowStockExample;
 import team.yqby.platform.dto.model.inner.WeChatCreateOrder;
@@ -21,8 +21,7 @@ import team.yqby.platform.exception.AutoPlatformException;
 import team.yqby.platform.mapper.FlowOrderMapper;
 import team.yqby.platform.mapper.FlowStockMapper;
 
-import java.beans.IntrospectionException;
-import java.lang.reflect.InvocationTargetException;
+import java.net.URLEncoder;
 import java.util.Date;
 import java.util.List;
 
@@ -46,11 +45,12 @@ public class FlowWeChatManager {
     public FlowStock checkGoodsPrice(String flowID, Long flowCurrentCost) {
         //1.根据流量编号查询价格
         FlowStockExample flowStockExample = new FlowStockExample();
-        flowStockExample.createCriteria().andFlowIdEqualTo(flowID).andArchiveFlagEqualTo("0");
+        flowStockExample.createCriteria().andFlowIdEqualTo(flowID).andArchiveFlagEqualTo(ArchiveFlagEnum.STR_0.getCode());
         List<FlowStock> flowStocks = flowStockMapper.selectByExample(flowStockExample);
         if (flowStocks == null || flowStocks.size() == 0) {
             throw new AutoPlatformException(ServiceErrorCode.ERROR_CODE_A10001);
         }
+
         //2.判断商户价格是否一致
         FlowStock flowStock = flowStocks.get(0);
         Long currentCost = flowStock.getFlowCurrentCost();
@@ -70,17 +70,17 @@ public class FlowWeChatManager {
      */
     public String createPayOrder(FlowStock flowStock, String productNo, String openID) {
         FlowOrder flowOrder = new FlowOrder();
-        flowOrder.setOrderId(DateUtils.formatDate(new Date(), "YYMMDDHHMMSSs" + (int) ((Math.random() * 9 + 1) * 100)));
+        flowOrder.setOrderId(NumberUtil.getOrderNoRandom());
         flowOrder.setOrderTime(new Date());
         flowOrder.setFlowId(Long.valueOf(flowStock.getFlowId()));
         flowOrder.setOriginalCost(flowStock.getFlowOriginalCost());
         flowOrder.setCurrentCost(flowStock.getFlowCurrentCost());
         flowOrder.setPhone(productNo);
         flowOrder.setOpenId(openID);
-        flowOrder.setTransStatus("INI");
+        flowOrder.setTransStatus(TransStatusEnum.INI.getStatus());
         flowOrder.setPayReqTime(new Date());
-        flowOrder.setCheckStatus("0");
-        flowOrder.setArchiveFlag("0");
+        flowOrder.setCheckStatus(CheckStatusEnum.STR_0.getCode());
+        flowOrder.setArchiveFlag(ArchiveFlagEnum.STR_0.getCode());
         flowOrder.setCreateBy(openID);
         flowOrder.setCreateDate(new Date());
         int i = flowOrderMapper.insert(flowOrder);
@@ -105,21 +105,24 @@ public class FlowWeChatManager {
             WeChatCreateOrder weChatCreateOrder = new WeChatCreateOrder();
             weChatCreateOrder.setAppid(PublicConfig.APP_ID);
             weChatCreateOrder.setMch_id(PublicConfig.MCH_ID);
-            weChatCreateOrder.setBody("德翼-流量充值");
+            weChatCreateOrder.setBody(URLEncoder.encode(PublicConfig.GOODS_NAME, PublicConfig.UTF_8));
             weChatCreateOrder.setNonce_str(MD5Util.MD5Encode(Joiner.on("&").join(orderNo, PublicConfig.MCH_KEY)));
             weChatCreateOrder.setNotify_url(PublicConfig.PAY_NOTIFY_URL);
             weChatCreateOrder.setOpenid(openId);
             weChatCreateOrder.setOut_trade_no(orderNo);
             weChatCreateOrder.setSpbill_create_ip(IPUtil.getLocalIP());
             weChatCreateOrder.setTotal_fee(orderAmt);
-//            weChatCreateOrder.setTrade_type("JSAPI"); TODO 微信使用此交易类型
-            weChatCreateOrder.setTrade_type("NATIVE");
+            weChatCreateOrder.setTrade_type(PublicConfig.TRADE_TYPE);
             weChatCreateOrder.setSign(WeChatXmlUtil.getSign(BeanToMapUtil.convertBean(weChatCreateOrder), PublicConfig.MCH_KEY));
             String requestXml = WeChatXmlUtil.toXml(weChatCreateOrder).replace("__", "_");
             String responseXml = WebCall.xmlSyncSend(PublicConfig.WX_CREATE_ORDER_URL, requestXml);
             WeChatXmlUtil weChatXmlUtil = WeChatXmlUtil.fromXML(responseXml);
+            //下单成功
+            updateOrderStatus(orderNo, TransStatusEnum.WAIT_PAY.getStatus());
             return weChatXmlUtil;
         } catch (AutoPlatformException e) {
+            //下单失败
+            updateOrderStatus(orderNo, TransStatusEnum.ORDER_FAIL.getStatus());
             log.error("createWeChatOrder AutoPlatformException error,", e);
             throw new AutoPlatformException(e.getCode(), e.getMessage());
         } catch (Exception e) {
@@ -128,6 +131,18 @@ public class FlowWeChatManager {
         }
     }
 
+    /**
+     * 更新交易状态
+     * @param orderNo
+     * @param transStatus
+     */
+    public void updateOrderStatus(String orderNo,String transStatus){
+        FlowOrder flowOrder = new FlowOrder();
+        flowOrder.setTransStatus(transStatus);
+        FlowOrderExample flowOrderExample = new FlowOrderExample();
+        flowOrderExample.createCriteria().andOrderIdEqualTo(orderNo).andArchiveFlagEqualTo(ArchiveFlagEnum.STR_0.getCode());
+        flowOrderMapper.updateByExample(flowOrder,flowOrderExample);
+    }
 
     /***
      * 下单结果转换
@@ -141,7 +156,7 @@ public class FlowWeChatManager {
         flowOrderRes.setTimeStamp(System.currentTimeMillis());
         flowOrderRes.setNonceStr(MD5Util.MD5Encode(Joiner.on("&").join(weChatXmlUtil.getPrepay_id(), PublicConfig.MCH_KEY)));
         flowOrderRes.setPack_age(packageStr);
-        flowOrderRes.setSignType("MD5");
+        flowOrderRes.setSignType(PublicConfig.SIGN_TYPE);
         try {
             flowOrderRes.setPaySign(WeChatXmlUtil.getSign(BeanToMapUtil.convertBean(flowOrderRes), PublicConfig.MCH_KEY));
         } catch (Exception e) {

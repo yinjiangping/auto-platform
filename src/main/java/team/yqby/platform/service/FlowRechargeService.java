@@ -39,11 +39,14 @@ public class FlowRechargeService {
      */
     public FlowOrderRes createOrder(FlowOrderReq flowOrderReq) {
         //1.校验商品价格
-        FlowStock flowStock = flowWeChatManager.checkGoodsPrice(String.valueOf(flowOrderReq.getFlowID()), flowOrderReq.getFlowCurrentCost());
+        FlowStock flowStock = flowWeChatManager.checkGoodsPrice(flowOrderReq.getFlowID(), flowOrderReq.getFlowCurrentCost());
+
         //2.支付下单
         String orderNo = flowWeChatManager.createPayOrder(flowStock, flowOrderReq.getPhone(), flowOrderReq.getOpenID());
+
         //3.微信下单
         WeChatXmlUtil weChatXmlUtil = flowWeChatManager.createWeChatOrder(flowOrderReq.getOpenID(), orderNo, flowOrderReq.getFlowCurrentCost());
+
         //4.返回结果转换
         FlowOrderRes flowOrderRes = flowWeChatManager.resultConversion(weChatXmlUtil);
         return flowOrderRes;
