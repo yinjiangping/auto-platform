@@ -35,16 +35,15 @@ public class FlowGoodsInfoController {
     public String queryGoodsInfo() {
 
         Result result = new Result();
-        List<FlowStock> list = new ArrayList<FlowStock>();
         try {
             // 查询有效的商品信息
             FlowStockExample example = new FlowStockExample();
             FlowStockExample.Criteria criteria = example.createCriteria();
             criteria.andArchiveFlagEqualTo(ArchiveFlagEnum.STR_0.getCode());
-            list = flowStockMapper.selectByExample(example);
+            List<FlowStock> list = flowStockMapper.selectByExample(example);
 
             // 查询不到商品信息
-            if (list.size() < 1) {
+            if (null == list || list.size() < 1) {
                 result.setErrorCode(ErrorCodeEnum.DATABASE_SELECT_IS_NULL.getCode());
                 result.setErrorMsg(ErrorCodeEnum.DATABASE_SELECT_IS_NULL.getDesc());
             } else {
