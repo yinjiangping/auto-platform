@@ -39,7 +39,7 @@ public class FlowRechargeController {
             log.info("createOrder finished, openId:{}, response:{}", flowOrderReq.getOpenID(), flowOrderRes);
         } catch (AutoPlatformException e) {
             log.error("createOrder meet error, openId:{}, response:{}", flowOrderReq.getOpenID(), Throwables.getStackTraceAsString(e));
-            return new Response<FlowOrderRes>(e.getCode(), e.getResMessage());
+            return new Response<FlowOrderRes>(e.getCode(), e.getMessage());
         } catch (Exception e) {
             log.error("createOrder meet error, openId:{}, response:{}", flowOrderReq.getOpenID(), Throwables.getStackTraceAsString(e));
             return new Response<FlowOrderRes>(ServiceErrorCode.ERROR_CODE_F99999);

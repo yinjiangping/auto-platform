@@ -144,7 +144,7 @@ public class FlowWeChatManager {
         flowOrder.setTransStatus(transStatus);
         FlowOrderExample flowOrderExample = new FlowOrderExample();
         flowOrderExample.createCriteria().andOrderIdEqualTo(orderNo).andArchiveFlagEqualTo(ArchiveFlagEnum.STR_0.getCode());
-        flowOrderMapper.updateByExample(flowOrder, flowOrderExample);
+        flowOrderMapper.updateByExampleSelective(flowOrder, flowOrderExample);
     }
 
     /**
