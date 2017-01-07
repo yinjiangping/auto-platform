@@ -15,8 +15,9 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 public enum CheckStatusEnum {
-
+    //对账初始化
     STR_0("0"),
+    //对账成功
     STR_1("1");
 
     private String code;

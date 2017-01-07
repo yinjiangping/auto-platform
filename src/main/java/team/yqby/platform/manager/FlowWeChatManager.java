@@ -16,12 +16,14 @@ import team.yqby.platform.dto.model.FlowOrderExample;
 import team.yqby.platform.dto.model.FlowStock;
 import team.yqby.platform.dto.model.FlowStockExample;
 import team.yqby.platform.dto.model.inner.WeChatCreateOrder;
+import team.yqby.platform.dto.model.req.PayNotifyReq;
 import team.yqby.platform.dto.model.res.FlowOrderRes;
 import team.yqby.platform.exception.AutoPlatformException;
 import team.yqby.platform.mapper.FlowOrderMapper;
 import team.yqby.platform.mapper.FlowStockMapper;
 
 import java.net.URLEncoder;
+import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 
@@ -81,7 +83,7 @@ public class FlowWeChatManager {
         flowOrder.setPayReqTime(new Date());
         flowOrder.setCheckStatus(CheckStatusEnum.STR_0.getCode());
         flowOrder.setArchiveFlag(ArchiveFlagEnum.STR_0.getCode());
-        flowOrder.setCreateBy(openID);
+        flowOrder.setCreateBy(PublicConfig.SYS_USER);
         flowOrder.setCreateDate(new Date());
         int i = flowOrderMapper.insert(flowOrder);
         if (i == 0) {
@@ -113,21 +115,21 @@ public class FlowWeChatManager {
             weChatCreateOrder.setSpbill_create_ip(IPUtil.getLocalIP());
             weChatCreateOrder.setTotal_fee(orderAmt);
             weChatCreateOrder.setTrade_type(PublicConfig.TRADE_TYPE);
-            weChatCreateOrder.setSign(WeChatXmlUtil.getSign(BeanToMapUtil.convertBean(weChatCreateOrder), PublicConfig.MCH_KEY));
+            weChatCreateOrder.setSign(WeChatXmlUtil.getSign(BeanToMapUtil.convertBean(weChatCreateOrder, ""), PublicConfig.MCH_KEY));
             String requestXml = WeChatXmlUtil.toXml(weChatCreateOrder).replace("__", "_");
             String responseXml = WebCall.xmlSyncSend(PublicConfig.WX_CREATE_ORDER_URL, requestXml);
             WeChatXmlUtil weChatXmlUtil = WeChatXmlUtil.fromXML(responseXml);
             //下单成功
-            updateOrderStatus(orderNo, TransStatusEnum.WAIT_PAY.getStatus());
+            updateOrderStatus(orderNo, TransStatusEnum.WAIT_PAY.getStatus(), "", "", null);
             return weChatXmlUtil;
         } catch (AutoPlatformException e) {
             //下单失败
-            updateOrderStatus(orderNo, TransStatusEnum.ORDER_FAIL.getStatus());
+            updateOrderStatus(orderNo, TransStatusEnum.ORDER_FAIL.getStatus(), "", "", null);
             log.error("createWeChatOrder AutoPlatformException error,", e);
             throw new AutoPlatformException(e.getCode(), e.getMessage());
         } catch (Exception e) {
             //下单失败
-            updateOrderStatus(orderNo, TransStatusEnum.ORDER_FAIL.getStatus());
+            updateOrderStatus(orderNo, TransStatusEnum.ORDER_FAIL.getStatus(), "", "", null);
             log.error("createWeChatOrder AutoPlatformException error,", e);
             throw new AutoPlatformException(ServiceErrorCode.ERROR_CODE_A10003.getResCode(), e.getMessage());
         }
@@ -139,11 +141,15 @@ public class FlowWeChatManager {
      * @param orderNo
      * @param transStatus
      */
-    public void updateOrderStatus(String orderNo, String transStatus) {
+    public void updateOrderStatus(String orderNo, String transStatus, String payResCode, String payResDesc, Date payResDate) {
         FlowOrder flowOrder = new FlowOrder();
         flowOrder.setTransStatus(transStatus);
         FlowOrderExample flowOrderExample = new FlowOrderExample();
-        flowOrderExample.createCriteria().andOrderIdEqualTo(orderNo).andArchiveFlagEqualTo(ArchiveFlagEnum.STR_0.getCode());
+        FlowOrderExample.Criteria criteria = flowOrderExample.createCriteria();
+        criteria.andOrderIdEqualTo(orderNo).andArchiveFlagEqualTo(ArchiveFlagEnum.STR_0.getCode()).andPayRespCodeEqualTo(payResCode).andPayRespDescEqualTo(payResDesc);
+        if (payResDesc != null) {
+            criteria.andPayRespTimeEqualTo(payResDate);
+        }
         flowOrderMapper.updateByExampleSelective(flowOrder, flowOrderExample);
     }
 
@@ -162,11 +168,51 @@ public class FlowWeChatManager {
         flowOrderRes.setPack_age(packageStr);
         flowOrderRes.setSignType(PublicConfig.SIGN_TYPE);
         try {
-            flowOrderRes.setPaySign(WeChatXmlUtil.getSign(BeanToMapUtil.convertBean(flowOrderRes), PublicConfig.MCH_KEY));
+            flowOrderRes.setPaySign(WeChatXmlUtil.getSign(BeanToMapUtil.convertBean(flowOrderRes, ""), PublicConfig.MCH_KEY));
         } catch (Exception e) {
             log.error("resultConversion exception,error", e);
             throw new AutoPlatformException(ServiceErrorCode.ERROR_CODE_A10003.getResCode(), e.getMessage());
         }
         return flowOrderRes;
+    }
+
+    /**
+     * @param payNotifyReq
+     */
+    public void checkTransSafe(PayNotifyReq payNotifyReq) throws ParseException {
+
+        //1.校验支付状态
+        if (!PublicConfig.CALL_SUCCESS.equals(payNotifyReq.getReturn_code())) {
+            updateOrderStatus(payNotifyReq.getOut_trade_no(), TransStatusEnum.PAY_FAIL.getStatus(), payNotifyReq.getResult_code(), payNotifyReq.getReturn_msg(), DateUtil.parse(payNotifyReq.getTime_end(), DateUtil.fullPattern));
+            throw new AutoPlatformException(payNotifyReq.getResult_code(), payNotifyReq.getReturn_msg());
+        }
+        if (!PublicConfig.CALL_SUCCESS.equals(payNotifyReq.getResult_code())) {
+            updateOrderStatus(payNotifyReq.getOut_trade_no(), TransStatusEnum.PAY_FAIL.getStatus(), payNotifyReq.getErr_code(), payNotifyReq.getErr_code_des(), DateUtil.parse(payNotifyReq.getTime_end(), DateUtil.fullPattern));
+            throw new AutoPlatformException(payNotifyReq.getErr_code(), payNotifyReq.getErr_code_des());
+        }
+        //2.校验SIGN签名
+        String sign = WeChatXmlUtil.getSign(BeanToMapUtil.convertBean(payNotifyReq, "sign"), PublicConfig.MCH_KEY);
+        if (!sign.equals(payNotifyReq.getSign())) {
+            log.error("订单号:{},请求的SIGN:{},生成的SIGN:{}", payNotifyReq.getOut_trade_no(), payNotifyReq.getSign(), sign);
+            updateOrderStatus(payNotifyReq.getOut_trade_no(), TransStatusEnum.PAY_FAIL.getStatus(), ServiceErrorCode.ERROR_CODE_A10005.getResCode(), ServiceErrorCode.ERROR_CODE_A10005.getResDesc(), DateUtil.parse(payNotifyReq.getTime_end(), DateUtil.fullPattern));
+            throw new AutoPlatformException(ServiceErrorCode.ERROR_CODE_A10005);
+        }
+        //3.更新支付状态
+        updateOrderStatus(payNotifyReq.getOut_trade_no(), TransStatusEnum.PAY_SUC.getStatus(), payNotifyReq.getReturn_code(), payNotifyReq.getReturn_msg(), DateUtil.parse(payNotifyReq.getTime_end(), DateUtil.fullPattern));
+    }
+
+    /**
+     *  查询订单信息
+     * @param orderNo  订单号
+     * @return
+     */
+    public FlowOrder queryPayOrderInfo(String orderNo){
+        FlowOrderExample flowOrderExample = new FlowOrderExample();
+        flowOrderExample.createCriteria().andOrderIdNotEqualTo(orderNo).andArchiveFlagEqualTo(ArchiveFlagEnum.STR_0.getCode());
+        List<FlowOrder> flowOrders = flowOrderMapper.selectByExample(flowOrderExample);
+        if(flowOrders == null || flowOrders.isEmpty()){
+            throw new AutoPlatformException(ServiceErrorCode.ERROR_CODE_A10006);
+        }
+        return flowOrders.get(0);
     }
 }

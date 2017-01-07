@@ -30,4 +30,7 @@ public class ApiUrls {
     //创建流量订单
     public static final String FLOW_CREATE_ORDER_URL="/order";
 
+    //支付回调通知
+    public static final String FLOW_PAY_NOTIFY_URL="/payCallBack";
+
 }

@@ -8,6 +8,8 @@ public class PublicConfig {
     public static final String UTF_8="UTF-8";
     //签名类型
     public static final String SIGN_TYPE="MD5";
+    //系统用户
+    public static final String SYS_USER="system";
     //账单文件路径
     public static final String BILL_FILE_PATH = "/data/file/";
     //    public static final String BILL_FILE_PATH = "D:\\";
@@ -24,10 +26,16 @@ public class PublicConfig {
 
     public static final String WX_CREATE_ORDER_URL = "https://api.mch.weixin.qq.com/pay/unifiedorder";
 
+    public static final String FLOW_RECHARGE_URL="http://admin.xll.sfssh.com/adapter/flowrecharge";
+
     public static final String PAY_NOTIFY_URL = "http://www.djtx.com.cn/payCallBack";
 
     public static final String GOODS_NAME="德翼-流量充值";
     //  TODO 微信使用    JSAPI
     public static final String TRADE_TYPE="NATIVE";
+
+    public static final String FLOW_CHANNEL_ID="qidian";
+
+    public static final String FLOW_KEY="avIve4JrVR7zTHkUGVe1Z9QTFfKS7skF";
 
 }

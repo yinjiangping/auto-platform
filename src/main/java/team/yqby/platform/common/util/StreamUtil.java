@@ -1,5 +1,11 @@
 package team.yqby.platform.common.util;
 
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.StaxDriver;
+import org.apache.commons.lang.StringUtils;
+import team.yqby.platform.dto.model.res.PayNotifyRes;
+
+import javax.servlet.http.HttpServletRequest;
 import java.io.*;
 
 /**
@@ -32,14 +38,43 @@ public class StreamUtil {
         outStream.close();
     }
 
-    public static String chinaToUnicode(String str){
-        String result="";
-        for (int i = 0; i < str.length(); i++){
+    /**
+     * 生成XML报文
+     *
+     * @param object 对象
+     * @return 报文
+     */
+    public static String toXml(Object object) {
+        XStream xStream = new XStream(new StaxDriver());
+        xStream.autodetectAnnotations(true);
+        String xml = xStream.toXML(object);
+        return xml;
+    }
+
+    public static String streamToStr(HttpServletRequest request) {
+        BufferedReader in = null;
+        try {
+            in = new BufferedReader(new InputStreamReader(request.getInputStream()));
+            StringBuilder stb = new StringBuilder();
+            String line = null;
+            while ((line = in.readLine()) != null) {
+                stb.append(line);
+            }
+            return StringUtils.trim(stb.toString());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
+    public static String chinaToUnicode(String str) {
+        String result = "";
+        for (int i = 0; i < str.length(); i++) {
             int chr1 = (char) str.charAt(i);
-            if(chr1>=19968&&chr1<=171941){
-                result+="\\u" + Integer.toHexString(chr1);
-            }else{
-                result+=str.charAt(i);
+            if (chr1 >= 19968 && chr1 <= 171941) {
+                result += "\\u" + Integer.toHexString(chr1);
+            } else {
+                result += str.charAt(i);
             }
         }
         return result;
