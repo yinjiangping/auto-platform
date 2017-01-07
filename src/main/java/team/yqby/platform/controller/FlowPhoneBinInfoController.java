@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import team.yqby.platform.common.constant.FlowConstant;
 import team.yqby.platform.common.enums.ArchiveFlagEnum;
+import team.yqby.platform.common.enums.CarrierNameEnum;
 import team.yqby.platform.common.enums.ErrorCodeEnum;
 import team.yqby.platform.common.enums.FlowPhoneBelongEnum;
 import team.yqby.platform.dto.PhoneBelongDto;
@@ -40,14 +41,15 @@ public class FlowPhoneBinInfoController {
 
         try {
             if (StringUtils.isBlank(phone) || phone.trim().length() < 7) {
-                response = new Response(ErrorCodeEnum.ILLEGAL_DATA.getCode(), ErrorCodeEnum.ILLEGAL_DATA.getDesc());
+                response = new Response(ErrorCodeEnum.ILLEGAL_DATA.getCode(),
+                    ErrorCodeEnum.ILLEGAL_DATA.getDesc());
                 return response;
             }
 
             FlowPhoneBinExample example = new FlowPhoneBinExample();
             FlowPhoneBinExample.Criteria criteria = example.createCriteria();
             criteria.andArchiveFlagEqualTo(ArchiveFlagEnum.STR_0.getCode());
-            criteria.andPhoneBinEqualTo(phone.trim().substring(0, 6));
+            criteria.andPhoneBinEqualTo(phone.trim().substring(0, 7));
 
             List<FlowPhoneBin> list = flowPhoneBinMapper.selectByExample(example);
             PhoneBelongDto phoneBelongDto = new PhoneBelongDto();
@@ -57,13 +59,18 @@ public class FlowPhoneBinInfoController {
                 phoneBelongDto.setPhoneBelong(FlowPhoneBelongEnum.NOT_SH_1.getCode());
             } else {
                 //上海号码
-                phoneBelongDto.setPhoneBelong(FlowConstant.CITY_CODE_021.equals(list.get(0).getCityCode()) ? FlowPhoneBelongEnum.SH_0.getCode() : FlowPhoneBelongEnum.NOT_SH_1.getCode());
+                phoneBelongDto.setPhoneBelong(
+                    (CarrierNameEnum.DX.getCode().equals(list.get(0).getCarrierName())
+                     && FlowConstant.CITY_CODE_021.equals(list.get(0).getCityCode()))
+                         ? FlowPhoneBelongEnum.SH_0.getCode()
+                         : FlowPhoneBelongEnum.NOT_SH_1.getCode());
             }
             response = new Response(phoneBelongDto);
 
         } catch (Exception e) {
             log.error("查询手机号归属地发生异常：{}", e);
-            response = new Response(ErrorCodeEnum.SYSTEM_ERROR.getCode(), ErrorCodeEnum.SYSTEM_ERROR.getDesc());
+            response = new Response(ErrorCodeEnum.SYSTEM_ERROR.getCode(),
+                ErrorCodeEnum.SYSTEM_ERROR.getDesc());
         }
 
         log.info("查询手机号归属地，结果为：{}", response);
