@@ -23,7 +23,6 @@ import java.util.List;
  */
 @Slf4j
 @Controller
-@RequestMapping(value = "/flowGoodsInfo")
 public class FlowGoodsInfoController {
 
     @Autowired
@@ -33,7 +32,7 @@ public class FlowGoodsInfoController {
      * 查询所有有效的商品信息
      * @return
      */
-    @RequestMapping(value = "/queryAll", method = RequestMethod.POST)
+    @RequestMapping(value = "/queryMchnts", method = RequestMethod.POST)
     @ResponseBody
     public Response<List<FlowStock>> queryGoodsInfo() {
 

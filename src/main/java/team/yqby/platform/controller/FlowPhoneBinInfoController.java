@@ -26,13 +26,12 @@ import java.util.List;
  */
 @Slf4j
 @Controller
-@RequestMapping(value = "/flowPhoneBinInfo")
 public class FlowPhoneBinInfoController {
 
     @Autowired
     private FlowPhoneBinMapper flowPhoneBinMapper;
 
-    @RequestMapping(value = "/query", method = RequestMethod.POST)
+    @RequestMapping(value = "/queryBin", method = RequestMethod.POST)
     @ResponseBody
     public Response<PhoneBelongDto> queryPhoneBinByPhone(String openID, String phone) {
         log.info("查询手机号归属地，请求参数：用户ID：{}，手机号：{}", openID, phone);

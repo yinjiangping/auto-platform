@@ -23,44 +23,23 @@ import java.util.List;
  */
 @Slf4j
 @Controller
-@RequestMapping(value = "/flowOrderInfo")
 public class FlowOrderInfoController {
 
     @Autowired
     private FlowOrderMapper flowOrderMapper;
 
-    @RequestMapping(value = "/query", method = RequestMethod.POST)
+    @RequestMapping(value = "/queryOrderList", method = RequestMethod.POST)
     @ResponseBody
     public Response<List<FlowOrder>> queryOrderByOpenIDAndPhone (String openID, String phone, long pageNumber, long pageSize) {
         log.info("查询订单信息，请求参数：用户ID：{}，手机号：{}", openID, phone);
         Response response;
         try {
-            /**
-            if (StringUtils.isBlank(openID)) {
-                response = new Response(ErrorCodeEnum.ILLEGAL_DATA.getCode(), ErrorCodeEnum.ILLEGAL_DATA.getDesc());
-                return response;
-            }
-             */
-
-        /**
-            FlowOrderExample example = new FlowOrderExample();
-            FlowOrderExample.Criteria criteria = example.createCriteria();
-            criteria.andArchiveFlagEqualTo(ArchiveFlagEnum.STR_0.getCode());
-            criteria.andOpenIdEqualTo(openID);
-            if (StringUtils.isNotBlank(phone)) {
-                criteria.andPhoneEqualTo(phone);
-            }
-            List<FlowOrder> list = flowOrderMapper.selectByExample(example);
-         */
 
             if (pageNumber < 0 || pageSize < 0) {
                 response = new Response(ErrorCodeEnum.ILLEGAL_DATA.getCode(), ErrorCodeEnum.ILLEGAL_DATA.getDesc());
                 return response;
             }
             long startRow = (pageNumber - 1) * pageSize;
-            if (startRow < 1) {
-                startRow = 1;
-            }
             List<FlowOrder> list = flowOrderMapper.selectBy(openID, phone, startRow, pageSize);
             if (null == list || list.size() < 1) {
                 response = new Response(ErrorCodeEnum.DATABASE_SELECT_IS_NULL.getCode(), ErrorCodeEnum.DATABASE_SELECT_IS_NULL.getDesc());
