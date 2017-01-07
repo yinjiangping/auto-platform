@@ -35,6 +35,12 @@ public class FlowOrderInfoController {
         Response response;
         try {
 
+            if (StringUtils.isBlank(openID)) {
+                openID = null;
+            }
+            if (StringUtils.isBlank(phone)) {
+                phone = null;
+            }
             if (pageNumber < 0 || pageSize < 0) {
                 response = new Response(ErrorCodeEnum.ILLEGAL_DATA.getCode(), ErrorCodeEnum.ILLEGAL_DATA.getDesc());
                 return response;
