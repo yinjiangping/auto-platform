@@ -5,15 +5,17 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import team.yqby.platform.common.constant.FlowConstant;
 import team.yqby.platform.common.enums.ArchiveFlagEnum;
+import team.yqby.platform.common.enums.CarrierNameEnum;
 import team.yqby.platform.common.enums.ErrorCodeEnum;
 import team.yqby.platform.common.enums.FlowPhoneBelongEnum;
 import team.yqby.platform.dto.PhoneBelongDto;
-import team.yqby.platform.dto.Result;
+import team.yqby.platform.dto.Response;
 import team.yqby.platform.dto.model.FlowPhoneBin;
 import team.yqby.platform.dto.model.FlowPhoneBinExample;
-import team.yqby.platform.dto.model.FlowStockExample;
 import team.yqby.platform.mapper.FlowPhoneBinMapper;
 
 import java.util.List;
@@ -25,28 +27,29 @@ import java.util.List;
  */
 @Slf4j
 @Controller
-@RequestMapping(value = "flowPhoneBinInfo")
 public class FlowPhoneBinInfoController {
 
     @Autowired
     private FlowPhoneBinMapper flowPhoneBinMapper;
 
-    @RequestMapping(value = "queryPhoneBinByNo")
-    public String queryPhoneBinByNo(String openID, String phoneNo) {
-        log.info("查询手机号归属地，请求参数：用户ID：{}，手机号：{}", openID, phoneNo);
-        Result result = new Result();
+    @RequestMapping(value = "/queryBin", method = RequestMethod.POST)
+    @ResponseBody
+    public Response<PhoneBelongDto> queryPhoneBinByPhone(String openID, String phone) {
+        log.info("查询手机号归属地，请求参数：用户ID：{}，手机号：{}", openID, phone);
+
+        Response response;
 
         try {
-            if (StringUtils.isBlank(phoneNo) || phoneNo.trim().length() < 7) {
-                result.setErrorCode(ErrorCodeEnum.ILLEGAL_DATA.getCode());
-                result.setErrorMsg(ErrorCodeEnum.ILLEGAL_DATA.getDesc());
-                // TODO
+            if (StringUtils.isBlank(phone) || phone.trim().length() < 7) {
+                response = new Response(ErrorCodeEnum.ILLEGAL_DATA.getCode(),
+                    ErrorCodeEnum.ILLEGAL_DATA.getDesc());
+                return response;
             }
 
             FlowPhoneBinExample example = new FlowPhoneBinExample();
             FlowPhoneBinExample.Criteria criteria = example.createCriteria();
             criteria.andArchiveFlagEqualTo(ArchiveFlagEnum.STR_0.getCode());
-            criteria.andPhoneBinEqualTo(phoneNo.trim().substring(0, 6));
+            criteria.andPhoneBinEqualTo(phone.trim().substring(0, 7));
 
             List<FlowPhoneBin> list = flowPhoneBinMapper.selectByExample(example);
             PhoneBelongDto phoneBelongDto = new PhoneBelongDto();
@@ -56,18 +59,22 @@ public class FlowPhoneBinInfoController {
                 phoneBelongDto.setPhoneBelong(FlowPhoneBelongEnum.NOT_SH_1.getCode());
             } else {
                 //上海号码
-                phoneBelongDto.setPhoneBelong(FlowConstant.CITY_CODE_021.equals(list.get(0).getCityCode()) ? FlowPhoneBelongEnum.SH_0.getCode() : FlowPhoneBelongEnum.NOT_SH_1.getCode());
+                phoneBelongDto.setPhoneBelong(
+                    (CarrierNameEnum.DX.getCode().equals(list.get(0).getCarrierName())
+                     && FlowConstant.CITY_CODE_021.equals(list.get(0).getCityCode()))
+                         ? FlowPhoneBelongEnum.SH_0.getCode()
+                         : FlowPhoneBelongEnum.NOT_SH_1.getCode());
             }
-            result.setResult(phoneBelongDto);
+            response = new Response(phoneBelongDto);
 
         } catch (Exception e) {
             log.error("查询手机号归属地发生异常：{}", e);
-            result.setErrorCode(ErrorCodeEnum.SYSTEM_ERROR.getCode());
-            result.setErrorMsg(ErrorCodeEnum.SYSTEM_ERROR.getDesc());
+            response = new Response(ErrorCodeEnum.SYSTEM_ERROR.getCode(),
+                ErrorCodeEnum.SYSTEM_ERROR.getDesc());
         }
 
-        log.info("查询手机号归属地，结果为：{}", result);
-        return null;
+        log.info("查询手机号归属地，结果为：{}", response);
+        return response;
     }
 
 }

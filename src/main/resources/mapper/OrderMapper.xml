@@ -431,4 +431,20 @@
       ARCHIVE_FLAG = #{archiveFlag,jdbcType=VARCHAR}
     where ID = #{id,jdbcType=BIGINT}
   </update>
+
+  <select id="selectBy" parameterType="map" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from t_order
+    where 1 = 1
+    <if test="phone != null">
+      and PHONE = #{phone,jdbcType=VARCHAR}
+    </if>
+    <if test="openId != null">
+      and OPEN_ID = #{openId,jdbcType=VARCHAR}
+    </if>
+    order by CREATE_DATE DESC
+    limit #{startRow,jdbcType=BIGINT}, #{pageSize,jdbcType=BIGINT}
+  </select>
+
 </mapper>
