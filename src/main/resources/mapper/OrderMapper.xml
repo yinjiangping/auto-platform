@@ -22,6 +22,17 @@
     <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate" />
     <result column="ARCHIVE_FLAG" jdbcType="VARCHAR" property="archiveFlag" />
   </resultMap>
+
+  <resultMap id="QueryResultMap" type="team.yqby.platform.dto.FlowOrderQueryDto">
+    <result column="ORDER_ID" jdbcType="VARCHAR" property="orderId" />
+    <result column="ORDER_TIME" jdbcType="TIMESTAMP" property="orderTime" />
+    <result column="CURRENT_COST" jdbcType="BIGINT" property="currentCost" />
+    <result column="PHONE" jdbcType="VARCHAR" property="phone" />
+    <result column="TRANS_STATUS" jdbcType="VARCHAR" property="transStatus" />
+    <result column="FLOW_TITLE" jdbcType="VARCHAR" property="flowTitle" />
+    <result column="FLOW_DESC" jdbcType="VARCHAR" property="flowDesc" />
+  </resultMap>
+
   <sql id="Example_Where_Clause">
     <where>
       <foreach collection="oredCriteria" item="criteria" separator="or">
@@ -432,18 +443,19 @@
     where ID = #{id,jdbcType=BIGINT}
   </update>
 
-  <select id="selectBy" parameterType="map" resultMap="BaseResultMap">
+  <select id="selectBy" parameterType="map" resultMap="QueryResultMap">
     select
-    <include refid="Base_Column_List" />
-    from t_order
+      a.ORDER_ID, a.ORDER_TIME, a.CURRENT_COST, a.PHONE, a.TRANS_STATUS, b.FLOW_TITLE, b.FLOW_DESC
+    from t_order a, t_flow_stock b
     where 1 = 1
     <if test="phone != null">
-      and PHONE = #{phone,jdbcType=VARCHAR}
+      and a.PHONE = #{phone,jdbcType=VARCHAR}
     </if>
     <if test="openId != null">
-      and OPEN_ID = #{openId,jdbcType=VARCHAR}
+      and a.OPEN_ID = #{openId,jdbcType=VARCHAR}
     </if>
-    order by CREATE_DATE DESC
+    and a.FLOW_ID = b.FLOW_ID
+    order by a.ORDER_TIME DESC
     limit #{startRow,jdbcType=BIGINT}, #{pageSize,jdbcType=BIGINT}
   </select>
 
