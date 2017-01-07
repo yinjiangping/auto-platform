@@ -2,6 +2,7 @@ package team.yqby.platform.mapper;
 
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
+import team.yqby.platform.dto.FlowOrderQueryDto;
 import team.yqby.platform.dto.model.FlowOrder;
 import team.yqby.platform.dto.model.FlowOrderExample;
 
@@ -28,6 +29,6 @@ public interface FlowOrderMapper {
 
     int updateByPrimaryKey(FlowOrder record);
 
-    List<FlowOrder> selectBy(@Param("openId") String openId, @Param("phone") String phone, @Param("startRow") long startRow, @Param("pageSize") long pageSize);
+    List<FlowOrderQueryDto> selectBy(@Param("openId") String openId, @Param("phone") String phone, @Param("startRow") long startRow, @Param("pageSize") long pageSize);
 
 }
