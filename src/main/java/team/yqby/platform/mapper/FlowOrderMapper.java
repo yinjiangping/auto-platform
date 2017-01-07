@@ -27,4 +27,7 @@ public interface FlowOrderMapper {
     int updateByPrimaryKeySelective(FlowOrder record);
 
     int updateByPrimaryKey(FlowOrder record);
+
+    List<FlowOrder> selectBy(@Param("openId") String openId, @Param("phone") String phone, @Param("startRow") long startRow, @Param("pageSize") long pageSize);
+
 }
