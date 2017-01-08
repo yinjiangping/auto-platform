@@ -29,6 +29,9 @@ public class FlowOrder extends FlowBaseInfo {
     /** 流量编号ID */
     private Long flowId;
 
+    /** 外部流量编号 */
+    private String outterFlowId;
+
     /** 原价 */
     private Long originalCost;
 
