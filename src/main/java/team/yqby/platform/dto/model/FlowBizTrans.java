@@ -47,6 +47,9 @@ public class FlowBizTrans extends FlowBaseInfo {
     /** 业务返回时间 */
     private Date bizRespTime;
 
+    /** 业务响应流水号 */
+    private String bizRespId;
+
     /** 业务返回码 */
     private String bizRespCode;
 

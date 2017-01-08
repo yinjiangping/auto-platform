@@ -755,6 +755,76 @@ public class FlowBizTransExample {
             return (Criteria) this;
         }
 
+        public Criteria andBizRespIdIsNull() {
+            addCriterion("BIZ_RESP_ID is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andBizRespIdIsNotNull() {
+            addCriterion("BIZ_RESP_ID is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andBizRespIdEqualTo(String value) {
+            addCriterion("BIZ_RESP_ID =", value, "bizRespId");
+            return (Criteria) this;
+        }
+
+        public Criteria andBizRespIdNotEqualTo(String value) {
+            addCriterion("BIZ_RESP_ID <>", value, "bizRespId");
+            return (Criteria) this;
+        }
+
+        public Criteria andBizRespIdGreaterThan(String value) {
+            addCriterion("BIZ_RESP_ID >", value, "bizRespId");
+            return (Criteria) this;
+        }
+
+        public Criteria andBizRespIdGreaterThanOrEqualTo(String value) {
+            addCriterion("BIZ_RESP_ID >=", value, "bizRespId");
+            return (Criteria) this;
+        }
+
+        public Criteria andBizRespIdLessThan(String value) {
+            addCriterion("BIZ_RESP_ID <", value, "bizRespId");
+            return (Criteria) this;
+        }
+
+        public Criteria andBizRespIdLessThanOrEqualTo(String value) {
+            addCriterion("BIZ_RESP_ID <=", value, "bizRespId");
+            return (Criteria) this;
+        }
+
+        public Criteria andBizRespIdLike(String value) {
+            addCriterion("BIZ_RESP_ID like", value, "bizRespId");
+            return (Criteria) this;
+        }
+
+        public Criteria andBizRespIdNotLike(String value) {
+            addCriterion("BIZ_RESP_ID not like", value, "bizRespId");
+            return (Criteria) this;
+        }
+
+        public Criteria andBizRespIdIn(List<String> values) {
+            addCriterion("BIZ_RESP_ID in", values, "bizRespId");
+            return (Criteria) this;
+        }
+
+        public Criteria andBizRespIdNotIn(List<String> values) {
+            addCriterion("BIZ_RESP_ID not in", values, "bizRespId");
+            return (Criteria) this;
+        }
+
+        public Criteria andBizRespIdBetween(String value1, String value2) {
+            addCriterion("BIZ_RESP_ID between", value1, value2, "bizRespId");
+            return (Criteria) this;
+        }
+
+        public Criteria andBizRespIdNotBetween(String value1, String value2) {
+            addCriterion("BIZ_RESP_ID not between", value1, value2, "bizRespId");
+            return (Criteria) this;
+        }
+
         public Criteria andBizRespCodeIsNull() {
             addCriterion("BIZ_RESP_CODE is null");
             return (Criteria) this;

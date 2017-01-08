@@ -12,6 +12,7 @@
     <result column="TRANS_STATUS" jdbcType="VARCHAR" property="transStatus" />
     <result column="BIZ_REQ_TIME" jdbcType="TIMESTAMP" property="bizReqTime" />
     <result column="BIZ_RESP_TIME" jdbcType="TIMESTAMP" property="bizRespTime" />
+    <result column="BIZ_RESP_ID" jdbcType="VARCHAR" property="bizRespId" />
     <result column="BIZ_RESP_CODE" jdbcType="VARCHAR" property="bizRespCode" />
     <result column="BIZ_RESP_DESC" jdbcType="VARCHAR" property="bizRespDesc" />
     <result column="CHECK_STATUS" jdbcType="VARCHAR" property="checkStatus" />
@@ -81,8 +82,8 @@
   </sql>
   <sql id="Base_Column_List">
     ID, ORDER_ID, BIZ_ID, FLOW_ID, OUTTER_FLOW_ID, CURRENT_COST, PHONE, TRANS_STATUS,
-    BIZ_REQ_TIME, BIZ_RESP_TIME, BIZ_RESP_CODE, BIZ_RESP_DESC, CHECK_STATUS, UPDATE_BY,
-    UPDATE_DATE, CREATE_BY, CREATE_DATE, ARCHIVE_FLAG
+    BIZ_REQ_TIME, BIZ_RESP_TIME, BIZ_RESP_ID, BIZ_RESP_CODE, BIZ_RESP_DESC, CHECK_STATUS,
+    UPDATE_BY, UPDATE_DATE, CREATE_BY, CREATE_DATE, ARCHIVE_FLAG
   </sql>
   <select id="selectByExample" parameterType="team.yqby.platform.dto.model.FlowBizTransExample" resultMap="BaseResultMap">
     select
@@ -119,17 +120,17 @@
     insert into t_biz_trans (ID, ORDER_ID, BIZ_ID,
     FLOW_ID, OUTTER_FLOW_ID, CURRENT_COST,
     PHONE, TRANS_STATUS, BIZ_REQ_TIME,
-    BIZ_RESP_TIME, BIZ_RESP_CODE, BIZ_RESP_DESC,
-    CHECK_STATUS, UPDATE_BY, UPDATE_DATE,
-    CREATE_BY, CREATE_DATE, ARCHIVE_FLAG
-    )
+    BIZ_RESP_TIME, BIZ_RESP_ID, BIZ_RESP_CODE,
+    BIZ_RESP_DESC, CHECK_STATUS, UPDATE_BY,
+    UPDATE_DATE, CREATE_BY, CREATE_DATE,
+    ARCHIVE_FLAG)
     values (#{id,jdbcType=BIGINT}, #{orderId,jdbcType=VARCHAR}, #{bizId,jdbcType=VARCHAR},
     #{flowId,jdbcType=BIGINT}, #{outterFlowId,jdbcType=VARCHAR}, #{currentCost,jdbcType=BIGINT},
     #{phone,jdbcType=VARCHAR}, #{transStatus,jdbcType=VARCHAR}, #{bizReqTime,jdbcType=TIMESTAMP},
-    #{bizRespTime,jdbcType=TIMESTAMP}, #{bizRespCode,jdbcType=VARCHAR}, #{bizRespDesc,jdbcType=VARCHAR},
-    #{checkStatus,jdbcType=VARCHAR}, #{updateBy,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP},
-    #{createBy,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, #{archiveFlag,jdbcType=VARCHAR}
-    )
+    #{bizRespTime,jdbcType=TIMESTAMP}, #{bizRespId,jdbcType=VARCHAR}, #{bizRespCode,jdbcType=VARCHAR},
+    #{bizRespDesc,jdbcType=VARCHAR}, #{checkStatus,jdbcType=VARCHAR}, #{updateBy,jdbcType=VARCHAR},
+    #{updateDate,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP},
+    #{archiveFlag,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="team.yqby.platform.dto.model.FlowBizTrans">
     insert into t_biz_trans
@@ -163,6 +164,9 @@
       </if>
       <if test="bizRespTime != null">
         BIZ_RESP_TIME,
+      </if>
+      <if test="bizRespId != null">
+        BIZ_RESP_ID,
       </if>
       <if test="bizRespCode != null">
         BIZ_RESP_CODE,
@@ -219,6 +223,9 @@
       </if>
       <if test="bizRespTime != null">
         #{bizRespTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="bizRespId != null">
+        #{bizRespId,jdbcType=VARCHAR},
       </if>
       <if test="bizRespCode != null">
         #{bizRespCode,jdbcType=VARCHAR},
@@ -285,6 +292,9 @@
       <if test="record.bizRespTime != null">
         BIZ_RESP_TIME = #{record.bizRespTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="record.bizRespId != null">
+        BIZ_RESP_ID = #{record.bizRespId,jdbcType=VARCHAR},
+      </if>
       <if test="record.bizRespCode != null">
         BIZ_RESP_CODE = #{record.bizRespCode,jdbcType=VARCHAR},
       </if>
@@ -326,6 +336,7 @@
     TRANS_STATUS = #{record.transStatus,jdbcType=VARCHAR},
     BIZ_REQ_TIME = #{record.bizReqTime,jdbcType=TIMESTAMP},
     BIZ_RESP_TIME = #{record.bizRespTime,jdbcType=TIMESTAMP},
+    BIZ_RESP_ID = #{record.bizRespId,jdbcType=VARCHAR},
     BIZ_RESP_CODE = #{record.bizRespCode,jdbcType=VARCHAR},
     BIZ_RESP_DESC = #{record.bizRespDesc,jdbcType=VARCHAR},
     CHECK_STATUS = #{record.checkStatus,jdbcType=VARCHAR},
@@ -368,6 +379,9 @@
       <if test="bizRespTime != null">
         BIZ_RESP_TIME = #{bizRespTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="bizRespId != null">
+        BIZ_RESP_ID = #{bizRespId,jdbcType=VARCHAR},
+      </if>
       <if test="bizRespCode != null">
         BIZ_RESP_CODE = #{bizRespCode,jdbcType=VARCHAR},
       </if>
@@ -406,6 +420,7 @@
       TRANS_STATUS = #{transStatus,jdbcType=VARCHAR},
       BIZ_REQ_TIME = #{bizReqTime,jdbcType=TIMESTAMP},
       BIZ_RESP_TIME = #{bizRespTime,jdbcType=TIMESTAMP},
+      BIZ_RESP_ID = #{bizRespId,jdbcType=VARCHAR},
       BIZ_RESP_CODE = #{bizRespCode,jdbcType=VARCHAR},
       BIZ_RESP_DESC = #{bizRespDesc,jdbcType=VARCHAR},
       CHECK_STATUS = #{checkStatus,jdbcType=VARCHAR},
