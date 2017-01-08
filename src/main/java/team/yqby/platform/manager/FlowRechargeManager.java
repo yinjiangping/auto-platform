@@ -183,11 +183,11 @@ public class FlowRechargeManager {
      * @return
      */
     public void checkBizParam(BizNotifyReq bizNotifyReq) {
-       String sign = MD5Util.MD5Encode(Joiner.on("").join(bizNotifyReq.getChannelid(), bizNotifyReq.getFlowrecord(), bizNotifyReq.getTimestamp(), bizNotifyReq.getResult(), MD5Util.MD5Encode(MD5Util.MD5Encode(PublicConfig.FLOW_KEY))));
-       if(!bizNotifyReq.getSign().equals(sign)){
-           log.error("param request sign:{},param create sign:{}",bizNotifyReq.getSign(),sign);
-           throw new AutoPlatformException(ServiceErrorCode.ERROR_CODE_A10005);
-       }
+        String sign = MD5Util.MD5Encode(Joiner.on("").join(bizNotifyReq.getChannelid(), bizNotifyReq.getFlowrecord(), bizNotifyReq.getTimestamp(), bizNotifyReq.getResult(), MD5Util.MD5Encode(MD5Util.MD5Encode(PublicConfig.FLOW_KEY))));
+        if (!bizNotifyReq.getSign().equals(sign)) {
+            log.error("sign check fail,param request sign:{},param create sign:{}", bizNotifyReq.getSign(), sign);
+            throw new AutoPlatformException(ServiceErrorCode.ERROR_CODE_A10005);
+        }
     }
 
 }

@@ -2,13 +2,10 @@ package team.yqby.platform.controller;
 
 import com.google.common.base.Throwables;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.httpclient.util.DateParseException;
-import org.jdom.JDOMException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 import team.yqby.platform.common.emodel.ServiceErrorCode;
-import team.yqby.platform.common.util.DateUtil;
 import team.yqby.platform.common.util.ParamsValidate;
 import team.yqby.platform.common.util.StreamUtil;
 import team.yqby.platform.config.ApiUrls;
@@ -20,15 +17,10 @@ import team.yqby.platform.dto.model.req.PayNotifyReq;
 import team.yqby.platform.dto.model.res.FlowOrderRes;
 import team.yqby.platform.dto.model.res.PayNotifyRes;
 import team.yqby.platform.exception.AutoPlatformException;
-import team.yqby.platform.manager.FlowWeChatManager;
 import team.yqby.platform.service.FlowRechargeService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.beans.IntrospectionException;
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.text.ParseException;
 
 @Slf4j
 @RestController
@@ -88,7 +80,7 @@ public class FlowRechargeController {
             //2.通知结果处理(更新支付结果并充值)
             PayNotifyRes payNotifyRes = flowRechargeService.payNotify(payNotifyReq);
 
-            log.info("payCallBack finished, response:{}", payNotifyRes);
+            log.info("payCallBack finished, payNotifyReq:{}, response:{}", payNotifyRes);
             return payNotifyRes;
         } catch (AutoPlatformException e) {
             log.error("payCallBack meet error, ", Throwables.getStackTraceAsString(e));
@@ -108,18 +100,18 @@ public class FlowRechargeController {
     @RequestMapping(value = ApiUrls.FLOW_BIZ_NOTIFY_URL)
     public
     @ResponseBody
-    String bizCallBack(@RequestBody BizNotifyReq bizNotifyReq) {
+    String bizCallBack(@Valid BizNotifyReq bizNotifyReq, Errors errors) {
         String result = PublicConfig.NOTIFY_RES_RESULT;
         try {
             log.info("bizCallBack started, request params:{}", bizNotifyReq);
 
             //1.校验请求参数
-//            ParamsValidate.validParamError(errors);
+            ParamsValidate.validParamError(errors);
 
             //2.通知结果处理(更新业务结果)
             flowRechargeService.bizNotify(bizNotifyReq);
 
-            log.info("bizCallBack finished, bizRespId:{}", bizNotifyReq.getFlowrecord());
+            log.info("bizCallBack finished, response:{}", result);
         } catch (AutoPlatformException e) {
             log.error("bizCallBack meet error, ", Throwables.getStackTraceAsString(e));
         } catch (Exception e) {
