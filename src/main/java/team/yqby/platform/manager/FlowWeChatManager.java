@@ -79,12 +79,14 @@ public class FlowWeChatManager {
         flowOrder.setCurrentCost(flowStock.getFlowCurrentCost());
         flowOrder.setPhone(productNo);
         flowOrder.setOpenId(openID);
+        flowOrder.setOutterFlowId(flowOrder.getOutterFlowId());
         flowOrder.setTransStatus(TransStatusEnum.INI.getStatus());
         flowOrder.setPayReqTime(new Date());
         flowOrder.setCheckStatus(CheckStatusEnum.STR_0.getCode());
         flowOrder.setArchiveFlag(ArchiveFlagEnum.STR_0.getCode());
         flowOrder.setCreateBy(PublicConfig.SYS_USER);
         flowOrder.setCreateDate(new Date());
+        flowOrder.setUpdateDate(new Date());
         int i = flowOrderMapper.insert(flowOrder);
         if (i == 0) {
             throw new AutoPlatformException(ServiceErrorCode.ERROR_CODE_A10003);
@@ -144,13 +146,16 @@ public class FlowWeChatManager {
     public void updateOrderStatus(String orderNo, String transStatus, String payResCode, String payResDesc, Date payResDate) {
         FlowOrder flowOrder = new FlowOrder();
         flowOrder.setTransStatus(transStatus);
+        flowOrder.setPayRespCode(payResCode);
+        flowOrder.setPayRespDesc(payResDesc);
+        flowOrder.setPayRespTime(payResDate);
         FlowOrderExample flowOrderExample = new FlowOrderExample();
         FlowOrderExample.Criteria criteria = flowOrderExample.createCriteria();
-        criteria.andOrderIdEqualTo(orderNo).andArchiveFlagEqualTo(ArchiveFlagEnum.STR_0.getCode()).andPayRespCodeEqualTo(payResCode).andPayRespDescEqualTo(payResDesc);
-        if (payResDesc != null) {
-            criteria.andPayRespTimeEqualTo(payResDate);
+        criteria.andOrderIdEqualTo(orderNo).andArchiveFlagEqualTo(ArchiveFlagEnum.STR_0.getCode());
+        int i = flowOrderMapper.updateByExampleSelective(flowOrder, flowOrderExample);
+        if (i == 0) {
+            throw new AutoPlatformException(ServiceErrorCode.ERROR_CODE_A10007.getResCode(), ServiceErrorCode.ERROR_CODE_A10007.getResDesc());
         }
-        flowOrderMapper.updateByExampleSelective(flowOrder, flowOrderExample);
     }
 
     /**
@@ -180,8 +185,12 @@ public class FlowWeChatManager {
      * @param payNotifyReq
      */
     public void checkTransSafe(PayNotifyReq payNotifyReq) throws ParseException {
-
-        //1.校验支付状态
+        //1.校验请求参数
+        if (payNotifyReq == null) {
+            log.error("订单号:{},通知报文有误,对象转换为空", payNotifyReq.getOut_trade_no());
+            throw new AutoPlatformException(ServiceErrorCode.ERROR_CODE_A10004);
+        }
+        //2.校验支付状态
         if (!PublicConfig.CALL_SUCCESS.equals(payNotifyReq.getReturn_code())) {
             updateOrderStatus(payNotifyReq.getOut_trade_no(), TransStatusEnum.PAY_FAIL.getStatus(), payNotifyReq.getResult_code(), payNotifyReq.getReturn_msg(), DateUtil.parse(payNotifyReq.getTime_end(), DateUtil.fullPattern));
             throw new AutoPlatformException(payNotifyReq.getResult_code(), payNotifyReq.getReturn_msg());
@@ -190,27 +199,28 @@ public class FlowWeChatManager {
             updateOrderStatus(payNotifyReq.getOut_trade_no(), TransStatusEnum.PAY_FAIL.getStatus(), payNotifyReq.getErr_code(), payNotifyReq.getErr_code_des(), DateUtil.parse(payNotifyReq.getTime_end(), DateUtil.fullPattern));
             throw new AutoPlatformException(payNotifyReq.getErr_code(), payNotifyReq.getErr_code_des());
         }
-        //2.校验SIGN签名
+        //3.校验SIGN签名
         String sign = WeChatXmlUtil.getSign(BeanToMapUtil.convertBean(payNotifyReq, "sign"), PublicConfig.MCH_KEY);
         if (!sign.equals(payNotifyReq.getSign())) {
             log.error("订单号:{},请求的SIGN:{},生成的SIGN:{}", payNotifyReq.getOut_trade_no(), payNotifyReq.getSign(), sign);
             updateOrderStatus(payNotifyReq.getOut_trade_no(), TransStatusEnum.PAY_FAIL.getStatus(), ServiceErrorCode.ERROR_CODE_A10005.getResCode(), ServiceErrorCode.ERROR_CODE_A10005.getResDesc(), DateUtil.parse(payNotifyReq.getTime_end(), DateUtil.fullPattern));
             throw new AutoPlatformException(ServiceErrorCode.ERROR_CODE_A10005);
         }
-        //3.更新支付状态
+        //4.更新支付状态
         updateOrderStatus(payNotifyReq.getOut_trade_no(), TransStatusEnum.PAY_SUC.getStatus(), payNotifyReq.getReturn_code(), payNotifyReq.getReturn_msg(), DateUtil.parse(payNotifyReq.getTime_end(), DateUtil.fullPattern));
     }
 
     /**
-     *  查询订单信息
-     * @param orderNo  订单号
+     * 查询订单信息
+     *
+     * @param orderNo 订单号
      * @return
      */
-    public FlowOrder queryPayOrderInfo(String orderNo){
+    public FlowOrder queryPayOrderInfo(String orderNo) {
         FlowOrderExample flowOrderExample = new FlowOrderExample();
         flowOrderExample.createCriteria().andOrderIdNotEqualTo(orderNo).andArchiveFlagEqualTo(ArchiveFlagEnum.STR_0.getCode());
         List<FlowOrder> flowOrders = flowOrderMapper.selectByExample(flowOrderExample);
-        if(flowOrders == null || flowOrders.isEmpty()){
+        if (flowOrders == null || flowOrders.isEmpty()) {
             throw new AutoPlatformException(ServiceErrorCode.ERROR_CODE_A10006);
         }
         return flowOrders.get(0);

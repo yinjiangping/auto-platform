@@ -34,6 +34,12 @@ public class FlowRechargeController {
     @Autowired
     private FlowRechargeService flowRechargeService;
 
+    /***
+     *  流量充值下单
+     * @param flowOrderReq  流量充值对象
+     * @param errors  绑定对象参数错误
+     * @return 下单结果
+     */
     @RequestMapping(value = ApiUrls.FLOW_CREATE_ORDER_URL, method = RequestMethod.POST)
     public
     @ResponseBody
@@ -56,7 +62,11 @@ public class FlowRechargeController {
         return new Response<>(flowOrderRes);
     }
 
-
+    /***
+     * 支付结果通知
+     * @param request  请求参数(XML报文)
+     * @return
+     */
     @RequestMapping(value = ApiUrls.FLOW_PAY_NOTIFY_URL)
     public
     @ResponseBody
@@ -79,33 +89,5 @@ public class FlowRechargeController {
         }
 
     }
-
-    public static void main(String[] args) throws JDOMException, IOException, IllegalAccessException, IntrospectionException, InvocationTargetException, DateParseException, ParseException {
-        String xml = "<xml>\n" +
-                "  <appid><![CDATA[wx2421b1c4370ec43b]]></appid>\n" +
-                "  <attach><![CDATA[支付测试]]></attach>\n" +
-                "  <bank_type><![CDATA[CFT]]></bank_type>\n" +
-                "  <fee_type><![CDATA[CNY]]></fee_type>\n" +
-                "  <is_subscribe><![CDATA[Y]]></is_subscribe>\n" +
-                "  <mch_id><![CDATA[10000100]]></mch_id>\n" +
-                "  <nonce_str><![CDATA[5d2b6c2a8db53831f7eda20af46e531c]]></nonce_str>\n" +
-                "  <openid><![CDATA[oUpF8uMEb4qRXf22hE3X68TekukE]]></openid>\n" +
-                "  <out_trade_no><![CDATA[1409811653]]></out_trade_no>\n" +
-                "  <result_code><![CDATA[SUCCESS]]></result_code>\n" +
-                "  <return_code><![CDATA[SUCCESS]]></return_code>\n" +
-                "  <sign><![CDATA[B552ED6B279343CB493C5DD0D78AB241]]></sign>\n" +
-                "  <sub_mch_id><![CDATA[10000100]]></sub_mch_id>\n" +
-                "  <time_end><![CDATA[20140903131540]]></time_end>\n" +
-                "  <total_fee>1</total_fee>\n" +
-                "  <trade_type><![CDATA[JSAPI]]></trade_type>\n" +
-                "  <transaction_id><![CDATA[1004400740201409030005092168]]></transaction_id>\n" +
-                "</xml> ";
-        PayNotifyReq payNotifyReq = PayNotifyReq.fromXML(xml);
-        new FlowWeChatManager().checkTransSafe(payNotifyReq);
-
-
-        System.out.println(payNotifyReq);
-    }
-
 
 }

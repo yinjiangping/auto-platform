@@ -16,9 +16,7 @@ import team.yqby.platform.common.util.DateUtil;
 import team.yqby.platform.common.util.MD5Util;
 import team.yqby.platform.common.util.NumberUtil;
 import team.yqby.platform.config.PublicConfig;
-import team.yqby.platform.dto.model.FlowBizTrans;
-import team.yqby.platform.dto.model.FlowOrder;
-import team.yqby.platform.dto.model.FlowStock;
+import team.yqby.platform.dto.model.*;
 import team.yqby.platform.dto.model.inner.FlowRechargeRes;
 import team.yqby.platform.dto.model.res.FlowOrderRes;
 import team.yqby.platform.dto.model.res.PayNotifyRes;
@@ -76,11 +74,11 @@ public class FlowRechargeManager {
      * @param channelOrderId 渠道订单号
      * @return
      */
-    public PayNotifyRes recharge(String phone, String channelId, Long productId, String timestamp, String channelOrderId) {
+    public PayNotifyRes recharge(String phone, String channelId, String productId, String timestamp, String channelOrderId) {
         List<NameValuePair> formParams = new ArrayList<>();
         formParams.add(new BasicNameValuePair("phone", phone));
         formParams.add(new BasicNameValuePair("channelid", channelId));
-        formParams.add(new BasicNameValuePair("productid", String.valueOf(productId)));
+        formParams.add(new BasicNameValuePair("productid", productId));
         formParams.add(new BasicNameValuePair("timestamp", timestamp));
         formParams.add(new BasicNameValuePair("channelorderid", channelOrderId));
         String md5Str = MD5Util.MD5Encode(Joiner.on("").join(channelId, productId, phone, timestamp, MD5Util.MD5Encode(MD5Util.MD5Encode(PublicConfig.FLOW_KEY))));
@@ -88,8 +86,32 @@ public class FlowRechargeManager {
         String resString = WebCall.closeableHttpClientPost(PublicConfig.FLOW_RECHARGE_URL, formParams);
         FlowRechargeRes flowRechargeRes = JSON.parseObject(resString, FlowRechargeRes.class);
         if (!"000".equals(flowRechargeRes.getRet())) {
+            updateBusinessStatus(channelOrderId,TransStatusEnum.RECHARGE_FAIL.getStatus(),flowRechargeRes.getRet(),flowRechargeRes.getMsg(),new Date());
             throw new AutoPlatformException(flowRechargeRes.getRet(), flowRechargeRes.getMsg());
         }
+        updateBusinessStatus(channelOrderId,TransStatusEnum.RECHARGE_SEND.getStatus(),flowRechargeRes.getRet(),flowRechargeRes.getMsg(),new Date());
         return new PayNotifyRes(flowRechargeRes.getRet(), flowRechargeRes.getMsg());
     }
+
+    /**
+     * 更新交易状态
+     *
+     * @param orderNo
+     * @param transStatus
+     */
+    public void updateBusinessStatus(String orderNo, String transStatus, String bizRespCode, String bizRespDesc, Date bizRespTime) {
+        FlowBizTrans flowBizTrans = new FlowBizTrans();
+        flowBizTrans.setTransStatus(transStatus);
+        flowBizTrans.setBizRespCode(bizRespCode);
+        flowBizTrans.setBizRespDesc(bizRespDesc);
+        flowBizTrans.setBizRespTime(bizRespTime);
+        FlowBizTransExample flowBizTransExample = new FlowBizTransExample();
+        FlowBizTransExample.Criteria criteria = flowBizTransExample.createCriteria();
+        criteria.andOrderIdEqualTo(orderNo).andArchiveFlagEqualTo(ArchiveFlagEnum.STR_0.getCode());
+        int i = flowBizTransMapper.updateByExampleSelective(flowBizTrans, flowBizTransExample);
+        if (i == 0) {
+            throw new AutoPlatformException(ServiceErrorCode.ERROR_CODE_A10007.getResCode(), ServiceErrorCode.ERROR_CODE_A10007.getResDesc());
+        }
+    }
+
 }

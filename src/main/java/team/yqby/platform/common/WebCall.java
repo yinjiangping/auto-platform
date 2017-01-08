@@ -11,6 +11,7 @@ import org.apache.http.util.EntityUtils;
 import team.yqby.platform.common.emodel.ServiceErrorCode;
 import team.yqby.platform.common.util.OCRHelper;
 import team.yqby.platform.common.util.UrlUtil;
+import team.yqby.platform.config.PublicConfig;
 import team.yqby.platform.exception.AutoPlatformException;
 
 import java.io.*;
@@ -150,7 +151,7 @@ public class WebCall {
         httpPost.setConfig(config);
         try {
             log.info("closeableHttpClientPost requestUrl:{},requestParam:{}", url, formParams);
-            UrlEncodedFormEntity entity = new UrlEncodedFormEntity(formParams, "UTF_8");
+            UrlEncodedFormEntity entity = new UrlEncodedFormEntity(formParams, PublicConfig.UTF_8);
             httpPost.setEntity(entity);
             HttpResponse httpResponse = closeableHttpClient.execute(httpPost);
             if (httpResponse.getStatusLine().getStatusCode() == org.apache.commons.httpclient.HttpStatus.SC_OK) {
