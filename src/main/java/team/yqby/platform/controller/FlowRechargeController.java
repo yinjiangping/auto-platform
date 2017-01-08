@@ -108,13 +108,13 @@ public class FlowRechargeController {
     @RequestMapping(value = ApiUrls.FLOW_BIZ_NOTIFY_URL)
     public
     @ResponseBody
-    String bizCallBack(@Valid @RequestBody BizNotifyReq bizNotifyReq, Errors errors) {
+    String bizCallBack(@RequestBody BizNotifyReq bizNotifyReq) {
         String result = PublicConfig.NOTIFY_RES_RESULT;
         try {
             log.info("bizCallBack started, request params:{}", bizNotifyReq);
 
             //1.校验请求参数
-            ParamsValidate.validParamError(errors);
+//            ParamsValidate.validParamError(errors);
 
             //2.通知结果处理(更新业务结果)
             flowRechargeService.bizNotify(bizNotifyReq);
