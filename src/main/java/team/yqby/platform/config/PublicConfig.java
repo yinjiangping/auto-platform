@@ -38,4 +38,6 @@ public class PublicConfig {
 
     public static final String FLOW_KEY="avIve4JrVR7zTHkUGVe1Z9QTFfKS7skF";
 
+    public static final String NOTIFY_RES_RESULT="00";
+
 }

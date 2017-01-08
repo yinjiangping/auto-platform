@@ -33,4 +33,7 @@ public class ApiUrls {
     //支付回调通知
     public static final String FLOW_PAY_NOTIFY_URL="/payCallBack";
 
+    //业务回调通知
+    public static final String FLOW_BIZ_NOTIFY_URL="/bizCallBack";
+
 }

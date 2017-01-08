@@ -5,8 +5,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import team.yqby.platform.common.util.*;
 import team.yqby.platform.config.PublicConfig;
+import team.yqby.platform.dto.model.FlowBizTrans;
 import team.yqby.platform.dto.model.FlowOrder;
 import team.yqby.platform.dto.model.FlowStock;
+import team.yqby.platform.dto.model.req.BizNotifyReq;
 import team.yqby.platform.dto.model.req.FlowOrderReq;
 import team.yqby.platform.dto.model.req.PayNotifyReq;
 import team.yqby.platform.dto.model.res.FlowOrderRes;
@@ -69,11 +71,29 @@ public class FlowRechargeService {
         FlowOrder flowOrder = flowWeChatManager.queryPayOrderInfo(payNotifyReq.getOut_trade_no());
 
         //3.业务下单
-        String businessReqNo = flowRechargeManager.createBusinessOrder(payNotifyReq.getOut_trade_no(), flowOrder.getPhone());
+        String businessReqNo = flowRechargeManager.createBusinessOrder(payNotifyReq.getOut_trade_no(), flowOrder.getPhone(),flowOrder.getCurrentCost());
 
         //4.流量充值
         PayNotifyRes payNotifyRes = flowRechargeManager.recharge(flowOrder.getPhone(), PublicConfig.FLOW_CHANNEL_ID, flowOrder.getOutterFlowId(), DateUtil.getCurrent(), businessReqNo);
 
         return payNotifyRes;
+    }
+
+    /**
+     * 业务回调通知
+     *
+     * @param bizNotifyReq
+     * @return
+     */
+    public void bizNotify(BizNotifyReq bizNotifyReq) throws ParseException {
+
+        //1.检查参数签名
+        flowRechargeManager.checkBizParam(bizNotifyReq);
+
+        //2.检查业务订单是否存在
+        flowRechargeManager.queryBizInfo(bizNotifyReq.getChannelorderid(),bizNotifyReq.getFlowrecord());
+
+       //3.更新业务交易状态
+        flowRechargeManager.updateBizTransStatus(bizNotifyReq);
     }
 }

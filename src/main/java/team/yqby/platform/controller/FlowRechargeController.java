@@ -12,7 +12,9 @@ import team.yqby.platform.common.util.DateUtil;
 import team.yqby.platform.common.util.ParamsValidate;
 import team.yqby.platform.common.util.StreamUtil;
 import team.yqby.platform.config.ApiUrls;
+import team.yqby.platform.config.PublicConfig;
 import team.yqby.platform.dto.Response;
+import team.yqby.platform.dto.model.req.BizNotifyReq;
 import team.yqby.platform.dto.model.req.FlowOrderReq;
 import team.yqby.platform.dto.model.req.PayNotifyReq;
 import team.yqby.platform.dto.model.res.FlowOrderRes;
@@ -34,10 +36,11 @@ public class FlowRechargeController {
     @Autowired
     private FlowRechargeService flowRechargeService;
 
-    /***
-     *  流量充值下单
-     * @param flowOrderReq  流量充值对象
-     * @param errors  绑定对象参数错误
+    /**
+     * 流量充值下单
+     *
+     * @param flowOrderReq 流量充值对象
+     * @param errors       绑定对象参数错误
      * @return 下单结果
      */
     @RequestMapping(value = ApiUrls.FLOW_CREATE_ORDER_URL, method = RequestMethod.POST)
@@ -47,10 +50,13 @@ public class FlowRechargeController {
         FlowOrderRes flowOrderRes = null;
         try {
             log.info("createOrder started, request params:{}", flowOrderReq);
-            //校验参数
+
+            //1.校验请求参数
             ParamsValidate.validParamError(errors);
-            //生成订单
+
+            //2.生成支付订单
             flowOrderRes = flowRechargeService.createOrder(flowOrderReq);
+
             log.info("createOrder finished, openId:{}, response:{}", flowOrderReq.getOpenID(), flowOrderRes);
         } catch (AutoPlatformException e) {
             log.error("createOrder meet error, openId:{}, response:{}", flowOrderReq.getOpenID(), Throwables.getStackTraceAsString(e));
@@ -62,32 +68,64 @@ public class FlowRechargeController {
         return new Response<>(flowOrderRes);
     }
 
-    /***
+    /**
      * 支付结果通知
-     * @param request  请求参数(XML报文)
+     *
+     * @param request 请求参数(XML报文)
      * @return
      */
     @RequestMapping(value = ApiUrls.FLOW_PAY_NOTIFY_URL)
     public
     @ResponseBody
-    PayNotifyRes payNotify(HttpServletRequest request) {
+    PayNotifyRes payCallBack(HttpServletRequest request) {
         try {
             String requestXml = StreamUtil.streamToStr(request);
-            log.info("payNotify started, request params:{}", requestXml);
+            log.info("payCallBack started, request params:{}", requestXml);
+
             //1.XML请求报文转对象
             PayNotifyReq payNotifyReq = PayNotifyReq.fromXML(requestXml);
-            //2.通知结果处理(校验支付状态并充值)
+
+            //2.通知结果处理(更新支付结果并充值)
             PayNotifyRes payNotifyRes = flowRechargeService.payNotify(payNotifyReq);
-            log.info("payNotify finished, payNotifyReq:{}, response:{}", payNotifyRes);
+
+            log.info("payCallBack finished, response:{}", payNotifyRes);
             return payNotifyRes;
         } catch (AutoPlatformException e) {
-            log.error("payNotify meet error, ", Throwables.getStackTraceAsString(e));
+            log.error("payCallBack meet error, ", Throwables.getStackTraceAsString(e));
             return new PayNotifyRes(e.getCode(), e.getMessage());
         } catch (Exception e) {
-            log.error("payNotify meet error, ", Throwables.getStackTraceAsString(e));
+            log.error("payCallBack meet error, ", Throwables.getStackTraceAsString(e));
             return new PayNotifyRes(ServiceErrorCode.ERROR_CODE_F99999.getResCode(), ServiceErrorCode.ERROR_CODE_F99999.getResDesc());
         }
+    }
 
+    /**
+     * 业务结果通知
+     *
+     * @param bizNotifyReq 业务通知请求参数
+     * @return
+     */
+    @RequestMapping(value = ApiUrls.FLOW_BIZ_NOTIFY_URL)
+    public
+    @ResponseBody
+    String bizCallBack(@Valid @RequestBody BizNotifyReq bizNotifyReq, Errors errors) {
+        String result = PublicConfig.NOTIFY_RES_RESULT;
+        try {
+            log.info("bizCallBack started, request params:{}", bizNotifyReq);
+
+            //1.校验请求参数
+            ParamsValidate.validParamError(errors);
+
+            //2.通知结果处理(更新业务结果)
+            flowRechargeService.bizNotify(bizNotifyReq);
+
+            log.info("bizCallBack finished, bizRespId:{}", bizNotifyReq.getFlowrecord());
+        } catch (AutoPlatformException e) {
+            log.error("bizCallBack meet error, ", Throwables.getStackTraceAsString(e));
+        } catch (Exception e) {
+            log.error("bizCallBack meet error, ", Throwables.getStackTraceAsString(e));
+        }
+        return result;
     }
 
 }

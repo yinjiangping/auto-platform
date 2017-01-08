@@ -18,6 +18,7 @@ import team.yqby.platform.common.util.NumberUtil;
 import team.yqby.platform.config.PublicConfig;
 import team.yqby.platform.dto.model.*;
 import team.yqby.platform.dto.model.inner.FlowRechargeRes;
+import team.yqby.platform.dto.model.req.BizNotifyReq;
 import team.yqby.platform.dto.model.res.FlowOrderRes;
 import team.yqby.platform.dto.model.res.PayNotifyRes;
 import team.yqby.platform.exception.AutoPlatformException;
@@ -43,20 +44,23 @@ public class FlowRechargeManager {
     /**
      * 业务下单
      *
-     * @param orderNo 订单号
-     * @param phone   手机号
+     * @param orderNo  订单号
+     * @param phone    手机号
+     * @param orderAmt 订单金额
      * @return
      */
-    public String createBusinessOrder(String orderNo, String phone) {
+    public String createBusinessOrder(String orderNo, String phone, Long orderAmt) {
         FlowBizTrans flowBizTrans = new FlowBizTrans();
-        flowBizTrans.setBizId(NumberUtil.getOrderNoRandom());
+        flowBizTrans.setBizId(NumberUtil.getBizOrderNoRandom());
         flowBizTrans.setOrderId(orderNo);
         flowBizTrans.setPhone(phone);
+        flowBizTrans.setCurrentCost(orderAmt);
         flowBizTrans.setTransStatus(TransStatusEnum.INI.getStatus());
         flowBizTrans.setCheckStatus(CheckStatusEnum.STR_0.getCode());
         flowBizTrans.setArchiveFlag(ArchiveFlagEnum.STR_0.getCode());
         flowBizTrans.setCreateBy(PublicConfig.SYS_USER);
         flowBizTrans.setCreateDate(new Date());
+        flowBizTrans.setUpdateDate(new Date());
         flowBizTrans.setArchiveFlag(ArchiveFlagEnum.STR_0.getCode());
         int i = flowBizTransMapper.insert(flowBizTrans);
         if (i == 0) {
@@ -86,20 +90,43 @@ public class FlowRechargeManager {
         String resString = WebCall.closeableHttpClientPost(PublicConfig.FLOW_RECHARGE_URL, formParams);
         FlowRechargeRes flowRechargeRes = JSON.parseObject(resString, FlowRechargeRes.class);
         if (!"000".equals(flowRechargeRes.getRet())) {
-            updateBusinessStatus(channelOrderId,TransStatusEnum.RECHARGE_FAIL.getStatus(),flowRechargeRes.getRet(),flowRechargeRes.getMsg(),new Date());
+            updateStatusByOrderId(channelOrderId, TransStatusEnum.RECHARGE_FAIL.getStatus(), flowRechargeRes.getRet(), flowRechargeRes.getMsg(), new Date(), flowRechargeRes.getFlowrecord());
             throw new AutoPlatformException(flowRechargeRes.getRet(), flowRechargeRes.getMsg());
         }
-        updateBusinessStatus(channelOrderId,TransStatusEnum.RECHARGE_SEND.getStatus(),flowRechargeRes.getRet(),flowRechargeRes.getMsg(),new Date());
+        updateStatusByOrderId(channelOrderId, TransStatusEnum.RECHARGE_SEND.getStatus(), flowRechargeRes.getRet(), flowRechargeRes.getMsg(), new Date(), flowRechargeRes.getFlowrecord());
         return new PayNotifyRes(flowRechargeRes.getRet(), flowRechargeRes.getMsg());
     }
 
     /**
      * 更新交易状态
      *
-     * @param orderNo
-     * @param transStatus
+     * @param channelOrderId 渠道订单号(业务请求订单号)
+     * @param transStatus    交易状态
      */
-    public void updateBusinessStatus(String orderNo, String transStatus, String bizRespCode, String bizRespDesc, Date bizRespTime) {
+    public void updateStatusByOrderId(String channelOrderId, String transStatus, String bizRespCode, String bizRespDesc, Date bizRespTime, String bizResNo) {
+        FlowBizTrans flowBizTrans = new FlowBizTrans();
+        flowBizTrans.setTransStatus(transStatus);
+        flowBizTrans.setBizRespId(bizResNo);
+        flowBizTrans.setBizRespCode(bizRespCode);
+        flowBizTrans.setBizRespDesc(bizRespDesc);
+        flowBizTrans.setBizRespTime(bizRespTime);
+        FlowBizTransExample flowBizTransExample = new FlowBizTransExample();
+        FlowBizTransExample.Criteria criteria = flowBizTransExample.createCriteria();
+        //根据渠道订单号(业务请求订单号)更新业务状态信息【防止订单号重复更新非成功的订单】
+        criteria.andBizIdEqualTo(channelOrderId).andTransStatusNotEqualTo(TransStatusEnum.RECHARGE_SUC.getStatus()).andArchiveFlagEqualTo(ArchiveFlagEnum.STR_0.getCode());
+        int i = flowBizTransMapper.updateByExampleSelective(flowBizTrans, flowBizTransExample);
+        if (i == 0) {
+            throw new AutoPlatformException(ServiceErrorCode.ERROR_CODE_A10007.getResCode(), ServiceErrorCode.ERROR_CODE_A10007.getResDesc());
+        }
+    }
+
+    /**
+     * 更新交易状态
+     *
+     * @param channelOrderId 渠道订单号(业务请求订单号)
+     * @param transStatus    交易状态
+     */
+    public void updateStatusByReqNoAndResNo(String channelOrderId, String bizResNo, String transStatus, String bizRespCode, String bizRespDesc, Date bizRespTime) {
         FlowBizTrans flowBizTrans = new FlowBizTrans();
         flowBizTrans.setTransStatus(transStatus);
         flowBizTrans.setBizRespCode(bizRespCode);
@@ -107,11 +134,60 @@ public class FlowRechargeManager {
         flowBizTrans.setBizRespTime(bizRespTime);
         FlowBizTransExample flowBizTransExample = new FlowBizTransExample();
         FlowBizTransExample.Criteria criteria = flowBizTransExample.createCriteria();
-        criteria.andOrderIdEqualTo(orderNo).andArchiveFlagEqualTo(ArchiveFlagEnum.STR_0.getCode());
+        //根据渠道订单号(业务请求订单号)更新业务状态信息【防止订单号重复更新非成功的订单】
+        criteria.andBizIdEqualTo(channelOrderId).andBizRespIdNotEqualTo(bizResNo).andTransStatusNotEqualTo(TransStatusEnum.RECHARGE_SUC.getStatus()).andArchiveFlagEqualTo(ArchiveFlagEnum.STR_0.getCode());
         int i = flowBizTransMapper.updateByExampleSelective(flowBizTrans, flowBizTransExample);
         if (i == 0) {
             throw new AutoPlatformException(ServiceErrorCode.ERROR_CODE_A10007.getResCode(), ServiceErrorCode.ERROR_CODE_A10007.getResDesc());
         }
+    }
+
+    /**
+     * 查询业务订单信息
+     *
+     * @param bizReqNo 渠道订单号
+     * @param bizResNo 业务订单号
+     * @return
+     */
+    public FlowBizTrans queryBizInfo(String bizReqNo, String bizResNo) {
+        FlowBizTransExample flowBizTransExample = new FlowBizTransExample();
+        flowBizTransExample.createCriteria().andBizIdEqualTo(bizReqNo).andBizRespIdEqualTo(bizResNo).andArchiveFlagEqualTo(ArchiveFlagEnum.STR_0.getCode());
+        List<FlowBizTrans> flowBizTransList = flowBizTransMapper.selectByExample(flowBizTransExample);
+        if (flowBizTransList == null || flowBizTransList.isEmpty()) {
+            throw new AutoPlatformException(ServiceErrorCode.ERROR_CODE_A10006);
+        }
+        return flowBizTransList.get(0);
+    }
+
+    /**
+     * 更新业务交易状态
+     *
+     * @param bizNotifyReq 业务通知请求参数
+     * @return
+     */
+    public void updateBizTransStatus(BizNotifyReq bizNotifyReq) {
+        TransStatusEnum transStatusEnum = null;
+        if ("000".equals(bizNotifyReq.getResult())) {
+            transStatusEnum = TransStatusEnum.RECHARGE_SUC;
+        } else {
+            transStatusEnum = TransStatusEnum.RECHARGE_FAIL;
+        }
+        updateStatusByReqNoAndResNo(bizNotifyReq.getChannelorderid(), bizNotifyReq.getFlowrecord(), transStatusEnum.getStatus(), bizNotifyReq.getResult(), transStatusEnum.getDesc(), DateUtil.parse(bizNotifyReq.getTimestamp(), DateUtil.fullPattern));
+
+    }
+
+    /**
+     * 更新业务交易状态
+     *
+     * @param bizNotifyReq 业务通知请求参数
+     * @return
+     */
+    public void checkBizParam(BizNotifyReq bizNotifyReq) {
+       String sign = MD5Util.MD5Encode(Joiner.on("").join(bizNotifyReq.getChannelid(), bizNotifyReq.getFlowrecord(), bizNotifyReq.getTimestamp(), bizNotifyReq.getResult(), MD5Util.MD5Encode(MD5Util.MD5Encode(PublicConfig.FLOW_KEY))));
+       if(!bizNotifyReq.getSign().equals(sign)){
+           log.error("param request sign:{},param create sign:{}",bizNotifyReq.getSign(),sign);
+           throw new AutoPlatformException(ServiceErrorCode.ERROR_CODE_A10005);
+       }
     }
 
 }

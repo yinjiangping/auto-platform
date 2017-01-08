@@ -1,5 +1,6 @@
 package team.yqby.platform.common.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 
 import java.text.ParseException;
@@ -16,6 +17,7 @@ import java.util.Map;
  * @version 1.0.0
  * @time 2015/07/02
  */
+@Slf4j
 public class DateUtil {
 
     /**
@@ -115,9 +117,9 @@ public class DateUtil {
         return format(targetTime.getTime(), DateUtil.fullPattern);
     }
 
-    public static String getDateAfter(int hour){
+    public static String getDateAfter(int hour) {
         Calendar targetTime = Calendar.getInstance();
-        targetTime.setTime( new Date());
+        targetTime.setTime(new Date());
         targetTime.add(Calendar.HOUR, hour);
         return format(targetTime.getTime(), DateUtil.shotPattern);
     }
@@ -173,10 +175,15 @@ public class DateUtil {
         return getSdf(pattern).format(date);
     }
 
-    public static Date parse(String dateStr, String pattern) throws ParseException {
-        if (StringUtils.isEmpty(dateStr)) {
-            return null;
+    public static Date parse(String dateStr, String pattern) {
+        try {
+            if (StringUtils.isEmpty(dateStr)) {
+                return null;
+            }
+            return getSdf(pattern).parse(dateStr);
+        } catch (Exception e) {
+            log.error("date parse exception,date:{},error", dateStr, e);
         }
-        return getSdf(pattern).parse(dateStr);
+        return new Date();
     }
 }
