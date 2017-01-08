@@ -32,6 +32,9 @@ public class FlowOrder extends FlowBaseInfo {
     /** 外部流量编号 */
     private String outterFlowId;
 
+    /** 支付订单号 */
+    private String prepayId;
+
     /** 原价 */
     private Long originalCost;
 

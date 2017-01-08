@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import team.yqby.platform.common.enums.ErrorCodeEnum;
 import team.yqby.platform.dto.Response;
+import team.yqby.platform.dto.query.FlowOpenIDDto;
 import team.yqby.platform.service.FlowTicketService;
 
 /**
@@ -29,11 +30,13 @@ public class FlowTicketController {
      */
     @RequestMapping(value = "/queryOpenID", method = RequestMethod.POST)
     @ResponseBody
-    public Response<String> queryByCode (String code) {
+    public Response<FlowOpenIDDto> queryByCode (String code) {
         Response response;
         Response<String> stringResponse = flowTicketService.queryOpenIDByCode(code);
         if (stringResponse.isSuccess()) {
-            response = new Response(stringResponse.getResult());
+            FlowOpenIDDto flowOpenIDDto = new FlowOpenIDDto();
+            flowOpenIDDto.setOpenID(stringResponse.getResult());
+            response = new Response(flowOpenIDDto);
         } else {
             response = new Response(ErrorCodeEnum.SYSTEM_ERROR.getCode(),
                     ErrorCodeEnum.SYSTEM_ERROR.getDesc());

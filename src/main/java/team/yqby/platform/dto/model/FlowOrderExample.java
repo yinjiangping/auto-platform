@@ -425,6 +425,76 @@ public class FlowOrderExample {
             return (Criteria) this;
         }
 
+        public Criteria andPrepayIdIsNull() {
+            addCriterion("PREPAY_ID is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPrepayIdIsNotNull() {
+            addCriterion("PREPAY_ID is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPrepayIdEqualTo(String value) {
+            addCriterion("PREPAY_ID =", value, "prepayId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPrepayIdNotEqualTo(String value) {
+            addCriterion("PREPAY_ID <>", value, "prepayId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPrepayIdGreaterThan(String value) {
+            addCriterion("PREPAY_ID >", value, "prepayId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPrepayIdGreaterThanOrEqualTo(String value) {
+            addCriterion("PREPAY_ID >=", value, "prepayId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPrepayIdLessThan(String value) {
+            addCriterion("PREPAY_ID <", value, "prepayId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPrepayIdLessThanOrEqualTo(String value) {
+            addCriterion("PREPAY_ID <=", value, "prepayId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPrepayIdLike(String value) {
+            addCriterion("PREPAY_ID like", value, "prepayId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPrepayIdNotLike(String value) {
+            addCriterion("PREPAY_ID not like", value, "prepayId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPrepayIdIn(List<String> values) {
+            addCriterion("PREPAY_ID in", values, "prepayId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPrepayIdNotIn(List<String> values) {
+            addCriterion("PREPAY_ID not in", values, "prepayId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPrepayIdBetween(String value1, String value2) {
+            addCriterion("PREPAY_ID between", value1, value2, "prepayId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPrepayIdNotBetween(String value1, String value2) {
+            addCriterion("PREPAY_ID not between", value1, value2, "prepayId");
+            return (Criteria) this;
+        }
+
         public Criteria andOriginalCostIsNull() {
             addCriterion("ORIGINAL_COST is null");
             return (Criteria) this;

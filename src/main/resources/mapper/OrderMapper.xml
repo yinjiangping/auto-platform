@@ -7,6 +7,7 @@
     <result column="ORDER_TIME" jdbcType="TIMESTAMP" property="orderTime" />
     <result column="FLOW_ID" jdbcType="BIGINT" property="flowId" />
     <result column="OUTTER_FLOW_ID" jdbcType="VARCHAR" property="outterFlowId" />
+    <result column="PREPAY_ID" jdbcType="VARCHAR" property="prepayId" />
     <result column="ORIGINAL_COST" jdbcType="BIGINT" property="originalCost" />
     <result column="CURRENT_COST" jdbcType="BIGINT" property="currentCost" />
     <result column="PHONE" jdbcType="VARCHAR" property="phone" />
@@ -93,8 +94,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    ID, ORDER_ID, ORDER_TIME, FLOW_ID, OUTTER_FLOW_ID, ORIGINAL_COST, CURRENT_COST, PHONE,
-    OPEN_ID, TRANS_STATUS, PAY_REQ_TIME, PAY_RESP_TIME, PAY_RESP_CODE, PAY_RESP_DESC,
+    ID, ORDER_ID, ORDER_TIME, FLOW_ID, OUTTER_FLOW_ID, PREPAY_ID, ORIGINAL_COST, CURRENT_COST,
+    PHONE, OPEN_ID, TRANS_STATUS, PAY_REQ_TIME, PAY_RESP_TIME, PAY_RESP_CODE, PAY_RESP_DESC,
     CHECK_STATUS, UPDATE_BY, UPDATE_DATE, CREATE_BY, CREATE_DATE, ARCHIVE_FLAG
   </sql>
   <select id="selectByExample" parameterType="team.yqby.platform.dto.model.FlowOrderExample" resultMap="BaseResultMap">
@@ -130,19 +131,21 @@
   </delete>
   <insert id="insert" parameterType="team.yqby.platform.dto.model.FlowOrder">
     insert into t_order (ID, ORDER_ID, ORDER_TIME,
-    FLOW_ID, OUTTER_FLOW_ID, ORIGINAL_COST,
-    CURRENT_COST, PHONE, OPEN_ID,
-    TRANS_STATUS, PAY_REQ_TIME, PAY_RESP_TIME,
-    PAY_RESP_CODE, PAY_RESP_DESC, CHECK_STATUS,
-    UPDATE_BY, UPDATE_DATE, CREATE_BY,
-    CREATE_DATE, ARCHIVE_FLAG)
+    FLOW_ID, OUTTER_FLOW_ID, PREPAY_ID,
+    ORIGINAL_COST, CURRENT_COST, PHONE,
+    OPEN_ID, TRANS_STATUS, PAY_REQ_TIME,
+    PAY_RESP_TIME, PAY_RESP_CODE, PAY_RESP_DESC,
+    CHECK_STATUS, UPDATE_BY, UPDATE_DATE,
+    CREATE_BY, CREATE_DATE, ARCHIVE_FLAG
+    )
     values (#{id,jdbcType=BIGINT}, #{orderId,jdbcType=VARCHAR}, #{orderTime,jdbcType=TIMESTAMP},
-    #{flowId,jdbcType=BIGINT}, #{outterFlowId,jdbcType=VARCHAR}, #{originalCost,jdbcType=BIGINT},
-    #{currentCost,jdbcType=BIGINT}, #{phone,jdbcType=VARCHAR}, #{openId,jdbcType=VARCHAR},
-    #{transStatus,jdbcType=VARCHAR}, #{payReqTime,jdbcType=TIMESTAMP}, #{payRespTime,jdbcType=TIMESTAMP},
-    #{payRespCode,jdbcType=VARCHAR}, #{payRespDesc,jdbcType=VARCHAR}, #{checkStatus,jdbcType=VARCHAR},
-    #{updateBy,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR},
-    #{createDate,jdbcType=TIMESTAMP}, #{archiveFlag,jdbcType=VARCHAR})
+    #{flowId,jdbcType=BIGINT}, #{outterFlowId,jdbcType=VARCHAR}, #{prepayId,jdbcType=VARCHAR},
+    #{originalCost,jdbcType=BIGINT}, #{currentCost,jdbcType=BIGINT}, #{phone,jdbcType=VARCHAR},
+    #{openId,jdbcType=VARCHAR}, #{transStatus,jdbcType=VARCHAR}, #{payReqTime,jdbcType=TIMESTAMP},
+    #{payRespTime,jdbcType=TIMESTAMP}, #{payRespCode,jdbcType=VARCHAR}, #{payRespDesc,jdbcType=VARCHAR},
+    #{checkStatus,jdbcType=VARCHAR}, #{updateBy,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP},
+    #{createBy,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, #{archiveFlag,jdbcType=VARCHAR}
+    )
   </insert>
   <insert id="insertSelective" parameterType="team.yqby.platform.dto.model.FlowOrder">
     insert into t_order
@@ -161,6 +164,9 @@
       </if>
       <if test="outterFlowId != null">
         OUTTER_FLOW_ID,
+      </if>
+      <if test="prepayId != null">
+        PREPAY_ID,
       </if>
       <if test="originalCost != null">
         ORIGINAL_COST,
@@ -223,6 +229,9 @@
       </if>
       <if test="outterFlowId != null">
         #{outterFlowId,jdbcType=VARCHAR},
+      </if>
+      <if test="prepayId != null">
+        #{prepayId,jdbcType=VARCHAR},
       </if>
       <if test="originalCost != null">
         #{originalCost,jdbcType=BIGINT},
@@ -295,6 +304,9 @@
       <if test="record.outterFlowId != null">
         OUTTER_FLOW_ID = #{record.outterFlowId,jdbcType=VARCHAR},
       </if>
+      <if test="record.prepayId != null">
+        PREPAY_ID = #{record.prepayId,jdbcType=VARCHAR},
+      </if>
       <if test="record.originalCost != null">
         ORIGINAL_COST = #{record.originalCost,jdbcType=BIGINT},
       </if>
@@ -352,6 +364,7 @@
     ORDER_TIME = #{record.orderTime,jdbcType=TIMESTAMP},
     FLOW_ID = #{record.flowId,jdbcType=BIGINT},
     OUTTER_FLOW_ID = #{record.outterFlowId,jdbcType=VARCHAR},
+    PREPAY_ID = #{record.prepayId,jdbcType=VARCHAR},
     ORIGINAL_COST = #{record.originalCost,jdbcType=BIGINT},
     CURRENT_COST = #{record.currentCost,jdbcType=BIGINT},
     PHONE = #{record.phone,jdbcType=VARCHAR},
@@ -385,6 +398,9 @@
       </if>
       <if test="outterFlowId != null">
         OUTTER_FLOW_ID = #{outterFlowId,jdbcType=VARCHAR},
+      </if>
+      <if test="prepayId != null">
+        PREPAY_ID = #{prepayId,jdbcType=VARCHAR},
       </if>
       <if test="originalCost != null">
         ORIGINAL_COST = #{originalCost,jdbcType=BIGINT},
@@ -440,6 +456,7 @@
     ORDER_TIME = #{orderTime,jdbcType=TIMESTAMP},
     FLOW_ID = #{flowId,jdbcType=BIGINT},
     OUTTER_FLOW_ID = #{outterFlowId,jdbcType=VARCHAR},
+    PREPAY_ID = #{prepayId,jdbcType=VARCHAR},
     ORIGINAL_COST = #{originalCost,jdbcType=BIGINT},
     CURRENT_COST = #{currentCost,jdbcType=BIGINT},
     PHONE = #{phone,jdbcType=VARCHAR},
