@@ -7,12 +7,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import team.yqby.platform.common.enums.ArchiveFlagEnum;
 import team.yqby.platform.common.enums.ErrorCodeEnum;
-import team.yqby.platform.dto.FlowOrderQueryDto;
+import team.yqby.platform.dto.query.FlowOrderQueryDto;
 import team.yqby.platform.dto.Response;
-import team.yqby.platform.dto.model.FlowOrder;
-import team.yqby.platform.dto.model.FlowOrderExample;
 import team.yqby.platform.mapper.FlowOrderMapper;
 
 import java.util.List;

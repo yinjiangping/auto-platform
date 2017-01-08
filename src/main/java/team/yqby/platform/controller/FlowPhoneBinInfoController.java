@@ -12,7 +12,7 @@ import team.yqby.platform.common.enums.ArchiveFlagEnum;
 import team.yqby.platform.common.enums.CarrierNameEnum;
 import team.yqby.platform.common.enums.ErrorCodeEnum;
 import team.yqby.platform.common.enums.FlowPhoneBelongEnum;
-import team.yqby.platform.dto.PhoneBelongDto;
+import team.yqby.platform.dto.query.PhoneBelongDto;
 import team.yqby.platform.dto.Response;
 import team.yqby.platform.dto.model.FlowPhoneBin;
 import team.yqby.platform.dto.model.FlowPhoneBinExample;

@@ -2,7 +2,7 @@ package team.yqby.platform.mapper;
 
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
-import team.yqby.platform.dto.FlowOrderQueryDto;
+import team.yqby.platform.dto.query.FlowOrderQueryDto;
 import team.yqby.platform.dto.model.FlowOrder;
 import team.yqby.platform.dto.model.FlowOrderExample;
 

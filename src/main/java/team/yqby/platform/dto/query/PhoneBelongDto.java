@@ -1,4 +1,4 @@
-package team.yqby.platform.dto;
+package team.yqby.platform.dto.query;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import lombok.Getter;

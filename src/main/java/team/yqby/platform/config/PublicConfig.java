@@ -40,4 +40,6 @@ public class PublicConfig {
 
     public static final String NOTIFY_RES_RESULT="00";
 
+    public static final String APP_SECRET = "e58c1409f966a76dadd141a06ff87706";
+
 }

@@ -24,7 +24,7 @@
     <result column="ARCHIVE_FLAG" jdbcType="VARCHAR" property="archiveFlag" />
   </resultMap>
 
-  <resultMap id="QueryResultMap" type="team.yqby.platform.dto.FlowOrderQueryDto">
+  <resultMap id="QueryResultMap" type="team.yqby.platform.dto.query.FlowOrderQueryDto">
     <result column="ORDER_ID" jdbcType="VARCHAR" property="orderId" />
     <result column="ORDER_TIME" jdbcType="TIMESTAMP" property="orderTime" />
     <result column="CURRENT_COST" jdbcType="BIGINT" property="currentCost" />
