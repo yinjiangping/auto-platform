@@ -24,15 +24,15 @@
     </appender>
 
     <!-- 第三方 jar 日志输出配置 -->
-    <logger name="org.springframework.web.servlet.DispatcherServlet" level="DEBUG"/>
-    <logger name="org.springframework.web.context.support.XmlWebApplicationContext" level="DEBUG"/>
-    <logger name="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping" level="DEBUG"/>
-    <logger name="com.alibaba.dubbo.registry.zookeeper.ZookeeperRegistry" level="DEBUG"/>
-    <logger name="com.alibaba.dubbo.config.AbstractConfig" level="DEBUG"/>
+    <logger name="org.springframework.web.servlet.DispatcherServlet" level="INFO"/>
+    <logger name="org.springframework.web.context.support.XmlWebApplicationContext" level="INFO"/>
+    <logger name="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping" level="INFO"/>
+    <logger name="com.alibaba.dubbo.registry.zookeeper.ZookeeperRegistry" level="INFO"/>
+    <logger name="com.alibaba.dubbo.config.AbstractConfig" level="INFO"/>
     <logger name="org.apache.commons" level="DEBUG"/>
 
     <!-- 日志输出适配器配置 -->
-    <root level="INFO" name="com.bestpay.mobilebiz">
+    <root level="INFO" name="team.yqby.platform">
         <appender-ref ref="stdout"/>
         <appender-ref ref="logInfoFile"/>
     </root>

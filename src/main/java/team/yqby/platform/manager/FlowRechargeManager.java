@@ -136,8 +136,10 @@ public class FlowRechargeManager {
         FlowBizTransExample.Criteria criteria = flowBizTransExample.createCriteria();
         //根据渠道订单号(业务请求订单号)更新业务状态信息【防止订单号重复更新非成功的订单】
         criteria.andBizIdEqualTo(channelOrderId).andBizRespIdNotEqualTo(bizResNo).andTransStatusNotEqualTo(TransStatusEnum.RECHARGE_SUC.getStatus()).andArchiveFlagEqualTo(ArchiveFlagEnum.STR_0.getCode());
+        log.info("updateStatusByReqNoAndResNo request param:{}", flowBizTransExample);
         int i = flowBizTransMapper.updateByExampleSelective(flowBizTrans, flowBizTransExample);
         if (i == 0) {
+            log.info("updateStatusByReqNoAndResNo error,bizResNo:{}", bizResNo);
             throw new AutoPlatformException(ServiceErrorCode.ERROR_CODE_A10007.getResCode(), ServiceErrorCode.ERROR_CODE_A10007.getResDesc());
         }
     }
@@ -152,8 +154,10 @@ public class FlowRechargeManager {
     public FlowBizTrans queryBizInfo(String bizReqNo, String bizResNo) {
         FlowBizTransExample flowBizTransExample = new FlowBizTransExample();
         flowBizTransExample.createCriteria().andBizIdEqualTo(bizReqNo).andBizRespIdEqualTo(bizResNo).andArchiveFlagEqualTo(ArchiveFlagEnum.STR_0.getCode());
+        log.info("queryBizInfo request param:{}", flowBizTransExample);
         List<FlowBizTrans> flowBizTransList = flowBizTransMapper.selectByExample(flowBizTransExample);
         if (flowBizTransList == null || flowBizTransList.isEmpty()) {
+            log.error("queryBizInfo result is null,bizResNo:{}", bizResNo);
             throw new AutoPlatformException(ServiceErrorCode.ERROR_CODE_A10006);
         }
         return flowBizTransList.get(0);
