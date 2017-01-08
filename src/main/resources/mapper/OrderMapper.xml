@@ -6,6 +6,7 @@
     <result column="ORDER_ID" jdbcType="VARCHAR" property="orderId" />
     <result column="ORDER_TIME" jdbcType="TIMESTAMP" property="orderTime" />
     <result column="FLOW_ID" jdbcType="BIGINT" property="flowId" />
+    <result column="OUTTER_FLOW_ID" jdbcType="VARCHAR" property="outterFlowId" />
     <result column="ORIGINAL_COST" jdbcType="BIGINT" property="originalCost" />
     <result column="CURRENT_COST" jdbcType="BIGINT" property="currentCost" />
     <result column="PHONE" jdbcType="VARCHAR" property="phone" />
@@ -92,9 +93,9 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    ID, ORDER_ID, ORDER_TIME, FLOW_ID, ORIGINAL_COST, CURRENT_COST, PHONE, OPEN_ID, TRANS_STATUS, 
-    PAY_REQ_TIME, PAY_RESP_TIME, PAY_RESP_CODE, PAY_RESP_DESC, CHECK_STATUS, UPDATE_BY, 
-    UPDATE_DATE, CREATE_BY, CREATE_DATE, ARCHIVE_FLAG
+    ID, ORDER_ID, ORDER_TIME, FLOW_ID, OUTTER_FLOW_ID, ORIGINAL_COST, CURRENT_COST, PHONE,
+    OPEN_ID, TRANS_STATUS, PAY_REQ_TIME, PAY_RESP_TIME, PAY_RESP_CODE, PAY_RESP_DESC,
+    CHECK_STATUS, UPDATE_BY, UPDATE_DATE, CREATE_BY, CREATE_DATE, ARCHIVE_FLAG
   </sql>
   <select id="selectByExample" parameterType="team.yqby.platform.dto.model.FlowOrderExample" resultMap="BaseResultMap">
     select
@@ -112,7 +113,7 @@
     </if>
   </select>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
-    select 
+    select
     <include refid="Base_Column_List" />
     from t_order
     where ID = #{id,jdbcType=BIGINT}
@@ -128,20 +129,20 @@
     </if>
   </delete>
   <insert id="insert" parameterType="team.yqby.platform.dto.model.FlowOrder">
-    insert into t_order (ID, ORDER_ID, ORDER_TIME, 
-      FLOW_ID, ORIGINAL_COST, CURRENT_COST, 
-      PHONE, OPEN_ID, TRANS_STATUS, 
-      PAY_REQ_TIME, PAY_RESP_TIME, PAY_RESP_CODE, 
-      PAY_RESP_DESC, CHECK_STATUS, UPDATE_BY, 
-      UPDATE_DATE, CREATE_BY, CREATE_DATE, 
-      ARCHIVE_FLAG)
-    values (#{id,jdbcType=BIGINT}, #{orderId,jdbcType=VARCHAR}, #{orderTime,jdbcType=TIMESTAMP}, 
-      #{flowId,jdbcType=BIGINT}, #{originalCost,jdbcType=BIGINT}, #{currentCost,jdbcType=BIGINT}, 
-      #{phone,jdbcType=VARCHAR}, #{openId,jdbcType=VARCHAR}, #{transStatus,jdbcType=VARCHAR}, 
-      #{payReqTime,jdbcType=TIMESTAMP}, #{payRespTime,jdbcType=TIMESTAMP}, #{payRespCode,jdbcType=VARCHAR}, 
-      #{payRespDesc,jdbcType=VARCHAR}, #{checkStatus,jdbcType=VARCHAR}, #{updateBy,jdbcType=VARCHAR}, 
-      #{updateDate,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, 
-      #{archiveFlag,jdbcType=VARCHAR})
+    insert into t_order (ID, ORDER_ID, ORDER_TIME,
+    FLOW_ID, OUTTER_FLOW_ID, ORIGINAL_COST,
+    CURRENT_COST, PHONE, OPEN_ID,
+    TRANS_STATUS, PAY_REQ_TIME, PAY_RESP_TIME,
+    PAY_RESP_CODE, PAY_RESP_DESC, CHECK_STATUS,
+    UPDATE_BY, UPDATE_DATE, CREATE_BY,
+    CREATE_DATE, ARCHIVE_FLAG)
+    values (#{id,jdbcType=BIGINT}, #{orderId,jdbcType=VARCHAR}, #{orderTime,jdbcType=TIMESTAMP},
+    #{flowId,jdbcType=BIGINT}, #{outterFlowId,jdbcType=VARCHAR}, #{originalCost,jdbcType=BIGINT},
+    #{currentCost,jdbcType=BIGINT}, #{phone,jdbcType=VARCHAR}, #{openId,jdbcType=VARCHAR},
+    #{transStatus,jdbcType=VARCHAR}, #{payReqTime,jdbcType=TIMESTAMP}, #{payRespTime,jdbcType=TIMESTAMP},
+    #{payRespCode,jdbcType=VARCHAR}, #{payRespDesc,jdbcType=VARCHAR}, #{checkStatus,jdbcType=VARCHAR},
+    #{updateBy,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR},
+    #{createDate,jdbcType=TIMESTAMP}, #{archiveFlag,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="team.yqby.platform.dto.model.FlowOrder">
     insert into t_order
@@ -157,6 +158,9 @@
       </if>
       <if test="flowId != null">
         FLOW_ID,
+      </if>
+      <if test="outterFlowId != null">
+        OUTTER_FLOW_ID,
       </if>
       <if test="originalCost != null">
         ORIGINAL_COST,
@@ -216,6 +220,9 @@
       </if>
       <if test="flowId != null">
         #{flowId,jdbcType=BIGINT},
+      </if>
+      <if test="outterFlowId != null">
+        #{outterFlowId,jdbcType=VARCHAR},
       </if>
       <if test="originalCost != null">
         #{originalCost,jdbcType=BIGINT},
@@ -285,6 +292,9 @@
       <if test="record.flowId != null">
         FLOW_ID = #{record.flowId,jdbcType=BIGINT},
       </if>
+      <if test="record.outterFlowId != null">
+        OUTTER_FLOW_ID = #{record.outterFlowId,jdbcType=VARCHAR},
+      </if>
       <if test="record.originalCost != null">
         ORIGINAL_COST = #{record.originalCost,jdbcType=BIGINT},
       </if>
@@ -338,24 +348,25 @@
   <update id="updateByExample" parameterType="map">
     update t_order
     set ID = #{record.id,jdbcType=BIGINT},
-      ORDER_ID = #{record.orderId,jdbcType=VARCHAR},
-      ORDER_TIME = #{record.orderTime,jdbcType=TIMESTAMP},
-      FLOW_ID = #{record.flowId,jdbcType=BIGINT},
-      ORIGINAL_COST = #{record.originalCost,jdbcType=BIGINT},
-      CURRENT_COST = #{record.currentCost,jdbcType=BIGINT},
-      PHONE = #{record.phone,jdbcType=VARCHAR},
-      OPEN_ID = #{record.openId,jdbcType=VARCHAR},
-      TRANS_STATUS = #{record.transStatus,jdbcType=VARCHAR},
-      PAY_REQ_TIME = #{record.payReqTime,jdbcType=TIMESTAMP},
-      PAY_RESP_TIME = #{record.payRespTime,jdbcType=TIMESTAMP},
-      PAY_RESP_CODE = #{record.payRespCode,jdbcType=VARCHAR},
-      PAY_RESP_DESC = #{record.payRespDesc,jdbcType=VARCHAR},
-      CHECK_STATUS = #{record.checkStatus,jdbcType=VARCHAR},
-      UPDATE_BY = #{record.updateBy,jdbcType=VARCHAR},
-      UPDATE_DATE = #{record.updateDate,jdbcType=TIMESTAMP},
-      CREATE_BY = #{record.createBy,jdbcType=VARCHAR},
-      CREATE_DATE = #{record.createDate,jdbcType=TIMESTAMP},
-      ARCHIVE_FLAG = #{record.archiveFlag,jdbcType=VARCHAR}
+    ORDER_ID = #{record.orderId,jdbcType=VARCHAR},
+    ORDER_TIME = #{record.orderTime,jdbcType=TIMESTAMP},
+    FLOW_ID = #{record.flowId,jdbcType=BIGINT},
+    OUTTER_FLOW_ID = #{record.outterFlowId,jdbcType=VARCHAR},
+    ORIGINAL_COST = #{record.originalCost,jdbcType=BIGINT},
+    CURRENT_COST = #{record.currentCost,jdbcType=BIGINT},
+    PHONE = #{record.phone,jdbcType=VARCHAR},
+    OPEN_ID = #{record.openId,jdbcType=VARCHAR},
+    TRANS_STATUS = #{record.transStatus,jdbcType=VARCHAR},
+    PAY_REQ_TIME = #{record.payReqTime,jdbcType=TIMESTAMP},
+    PAY_RESP_TIME = #{record.payRespTime,jdbcType=TIMESTAMP},
+    PAY_RESP_CODE = #{record.payRespCode,jdbcType=VARCHAR},
+    PAY_RESP_DESC = #{record.payRespDesc,jdbcType=VARCHAR},
+    CHECK_STATUS = #{record.checkStatus,jdbcType=VARCHAR},
+    UPDATE_BY = #{record.updateBy,jdbcType=VARCHAR},
+    UPDATE_DATE = #{record.updateDate,jdbcType=TIMESTAMP},
+    CREATE_BY = #{record.createBy,jdbcType=VARCHAR},
+    CREATE_DATE = #{record.createDate,jdbcType=TIMESTAMP},
+    ARCHIVE_FLAG = #{record.archiveFlag,jdbcType=VARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -371,6 +382,9 @@
       </if>
       <if test="flowId != null">
         FLOW_ID = #{flowId,jdbcType=BIGINT},
+      </if>
+      <if test="outterFlowId != null">
+        OUTTER_FLOW_ID = #{outterFlowId,jdbcType=VARCHAR},
       </if>
       <if test="originalCost != null">
         ORIGINAL_COST = #{originalCost,jdbcType=BIGINT},
@@ -423,29 +437,30 @@
   <update id="updateByPrimaryKey" parameterType="team.yqby.platform.dto.model.FlowOrder">
     update t_order
     set ORDER_ID = #{orderId,jdbcType=VARCHAR},
-      ORDER_TIME = #{orderTime,jdbcType=TIMESTAMP},
-      FLOW_ID = #{flowId,jdbcType=BIGINT},
-      ORIGINAL_COST = #{originalCost,jdbcType=BIGINT},
-      CURRENT_COST = #{currentCost,jdbcType=BIGINT},
-      PHONE = #{phone,jdbcType=VARCHAR},
-      OPEN_ID = #{openId,jdbcType=VARCHAR},
-      TRANS_STATUS = #{transStatus,jdbcType=VARCHAR},
-      PAY_REQ_TIME = #{payReqTime,jdbcType=TIMESTAMP},
-      PAY_RESP_TIME = #{payRespTime,jdbcType=TIMESTAMP},
-      PAY_RESP_CODE = #{payRespCode,jdbcType=VARCHAR},
-      PAY_RESP_DESC = #{payRespDesc,jdbcType=VARCHAR},
-      CHECK_STATUS = #{checkStatus,jdbcType=VARCHAR},
-      UPDATE_BY = #{updateBy,jdbcType=VARCHAR},
-      UPDATE_DATE = #{updateDate,jdbcType=TIMESTAMP},
-      CREATE_BY = #{createBy,jdbcType=VARCHAR},
-      CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
-      ARCHIVE_FLAG = #{archiveFlag,jdbcType=VARCHAR}
+    ORDER_TIME = #{orderTime,jdbcType=TIMESTAMP},
+    FLOW_ID = #{flowId,jdbcType=BIGINT},
+    OUTTER_FLOW_ID = #{outterFlowId,jdbcType=VARCHAR},
+    ORIGINAL_COST = #{originalCost,jdbcType=BIGINT},
+    CURRENT_COST = #{currentCost,jdbcType=BIGINT},
+    PHONE = #{phone,jdbcType=VARCHAR},
+    OPEN_ID = #{openId,jdbcType=VARCHAR},
+    TRANS_STATUS = #{transStatus,jdbcType=VARCHAR},
+    PAY_REQ_TIME = #{payReqTime,jdbcType=TIMESTAMP},
+    PAY_RESP_TIME = #{payRespTime,jdbcType=TIMESTAMP},
+    PAY_RESP_CODE = #{payRespCode,jdbcType=VARCHAR},
+    PAY_RESP_DESC = #{payRespDesc,jdbcType=VARCHAR},
+    CHECK_STATUS = #{checkStatus,jdbcType=VARCHAR},
+    UPDATE_BY = #{updateBy,jdbcType=VARCHAR},
+    UPDATE_DATE = #{updateDate,jdbcType=TIMESTAMP},
+    CREATE_BY = #{createBy,jdbcType=VARCHAR},
+    CREATE_DATE = #{createDate,jdbcType=TIMESTAMP},
+    ARCHIVE_FLAG = #{archiveFlag,jdbcType=VARCHAR}
     where ID = #{id,jdbcType=BIGINT}
   </update>
 
   <select id="selectBy" parameterType="map" resultMap="QueryResultMap">
     select
-      a.ORDER_ID, a.ORDER_TIME, a.CURRENT_COST, a.PHONE, a.TRANS_STATUS, b.FLOW_TITLE, b.FLOW_DESC
+    a.ORDER_ID, a.ORDER_TIME, a.CURRENT_COST, a.PHONE, a.TRANS_STATUS, b.FLOW_TITLE, b.FLOW_DESC
     from t_order a, t_flow_stock b
     where 1 = 1
     <if test="phone != null">
@@ -455,6 +470,7 @@
       and a.OPEN_ID = #{openId,jdbcType=VARCHAR}
     </if>
     and a.FLOW_ID = b.FLOW_ID
+    and a.ARCHIVE_FLAG = '0'
     order by a.ORDER_TIME DESC
     limit #{startRow,jdbcType=BIGINT}, #{pageSize,jdbcType=BIGINT}
   </select>

@@ -26,6 +26,15 @@ public class FlowBizTrans extends FlowBaseInfo {
     /** 业务请求流水号 */
     private String bizId;
 
+    /** 流量编号ID */
+    private Long flowId;
+
+    /** 外部流量编号 */
+    private String outterFlowId;
+
+    /** 支付价 */
+    private Long currentCost;
+
     /** 手机号，被充值对象 */
     private String phone;
 

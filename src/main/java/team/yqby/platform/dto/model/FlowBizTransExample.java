@@ -305,6 +305,196 @@ public class FlowBizTransExample {
             return (Criteria) this;
         }
 
+        public Criteria andFlowIdIsNull() {
+            addCriterion("FLOW_ID is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlowIdIsNotNull() {
+            addCriterion("FLOW_ID is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlowIdEqualTo(Long value) {
+            addCriterion("FLOW_ID =", value, "flowId");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlowIdNotEqualTo(Long value) {
+            addCriterion("FLOW_ID <>", value, "flowId");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlowIdGreaterThan(Long value) {
+            addCriterion("FLOW_ID >", value, "flowId");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlowIdGreaterThanOrEqualTo(Long value) {
+            addCriterion("FLOW_ID >=", value, "flowId");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlowIdLessThan(Long value) {
+            addCriterion("FLOW_ID <", value, "flowId");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlowIdLessThanOrEqualTo(Long value) {
+            addCriterion("FLOW_ID <=", value, "flowId");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlowIdIn(List<Long> values) {
+            addCriterion("FLOW_ID in", values, "flowId");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlowIdNotIn(List<Long> values) {
+            addCriterion("FLOW_ID not in", values, "flowId");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlowIdBetween(Long value1, Long value2) {
+            addCriterion("FLOW_ID between", value1, value2, "flowId");
+            return (Criteria) this;
+        }
+
+        public Criteria andFlowIdNotBetween(Long value1, Long value2) {
+            addCriterion("FLOW_ID not between", value1, value2, "flowId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOutterFlowIdIsNull() {
+            addCriterion("OUTTER_FLOW_ID is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andOutterFlowIdIsNotNull() {
+            addCriterion("OUTTER_FLOW_ID is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andOutterFlowIdEqualTo(String value) {
+            addCriterion("OUTTER_FLOW_ID =", value, "outterFlowId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOutterFlowIdNotEqualTo(String value) {
+            addCriterion("OUTTER_FLOW_ID <>", value, "outterFlowId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOutterFlowIdGreaterThan(String value) {
+            addCriterion("OUTTER_FLOW_ID >", value, "outterFlowId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOutterFlowIdGreaterThanOrEqualTo(String value) {
+            addCriterion("OUTTER_FLOW_ID >=", value, "outterFlowId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOutterFlowIdLessThan(String value) {
+            addCriterion("OUTTER_FLOW_ID <", value, "outterFlowId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOutterFlowIdLessThanOrEqualTo(String value) {
+            addCriterion("OUTTER_FLOW_ID <=", value, "outterFlowId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOutterFlowIdLike(String value) {
+            addCriterion("OUTTER_FLOW_ID like", value, "outterFlowId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOutterFlowIdNotLike(String value) {
+            addCriterion("OUTTER_FLOW_ID not like", value, "outterFlowId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOutterFlowIdIn(List<String> values) {
+            addCriterion("OUTTER_FLOW_ID in", values, "outterFlowId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOutterFlowIdNotIn(List<String> values) {
+            addCriterion("OUTTER_FLOW_ID not in", values, "outterFlowId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOutterFlowIdBetween(String value1, String value2) {
+            addCriterion("OUTTER_FLOW_ID between", value1, value2, "outterFlowId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOutterFlowIdNotBetween(String value1, String value2) {
+            addCriterion("OUTTER_FLOW_ID not between", value1, value2, "outterFlowId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurrentCostIsNull() {
+            addCriterion("CURRENT_COST is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurrentCostIsNotNull() {
+            addCriterion("CURRENT_COST is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurrentCostEqualTo(Long value) {
+            addCriterion("CURRENT_COST =", value, "currentCost");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurrentCostNotEqualTo(Long value) {
+            addCriterion("CURRENT_COST <>", value, "currentCost");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurrentCostGreaterThan(Long value) {
+            addCriterion("CURRENT_COST >", value, "currentCost");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurrentCostGreaterThanOrEqualTo(Long value) {
+            addCriterion("CURRENT_COST >=", value, "currentCost");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurrentCostLessThan(Long value) {
+            addCriterion("CURRENT_COST <", value, "currentCost");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurrentCostLessThanOrEqualTo(Long value) {
+            addCriterion("CURRENT_COST <=", value, "currentCost");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurrentCostIn(List<Long> values) {
+            addCriterion("CURRENT_COST in", values, "currentCost");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurrentCostNotIn(List<Long> values) {
+            addCriterion("CURRENT_COST not in", values, "currentCost");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurrentCostBetween(Long value1, Long value2) {
+            addCriterion("CURRENT_COST between", value1, value2, "currentCost");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurrentCostNotBetween(Long value1, Long value2) {
+            addCriterion("CURRENT_COST not between", value1, value2, "currentCost");
+            return (Criteria) this;
+        }
+
         public Criteria andPhoneIsNull() {
             addCriterion("PHONE is null");
             return (Criteria) this;

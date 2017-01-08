@@ -5,6 +5,9 @@
     <id column="ID" jdbcType="BIGINT" property="id" />
     <result column="ORDER_ID" jdbcType="VARCHAR" property="orderId" />
     <result column="BIZ_ID" jdbcType="VARCHAR" property="bizId" />
+    <result column="FLOW_ID" jdbcType="BIGINT" property="flowId" />
+    <result column="OUTTER_FLOW_ID" jdbcType="VARCHAR" property="outterFlowId" />
+    <result column="CURRENT_COST" jdbcType="BIGINT" property="currentCost" />
     <result column="PHONE" jdbcType="VARCHAR" property="phone" />
     <result column="TRANS_STATUS" jdbcType="VARCHAR" property="transStatus" />
     <result column="BIZ_REQ_TIME" jdbcType="TIMESTAMP" property="bizReqTime" />
@@ -77,8 +80,9 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    ID, ORDER_ID, BIZ_ID, PHONE, TRANS_STATUS, BIZ_REQ_TIME, BIZ_RESP_TIME, BIZ_RESP_CODE, 
-    BIZ_RESP_DESC, CHECK_STATUS, UPDATE_BY, UPDATE_DATE, CREATE_BY, CREATE_DATE, ARCHIVE_FLAG
+    ID, ORDER_ID, BIZ_ID, FLOW_ID, OUTTER_FLOW_ID, CURRENT_COST, PHONE, TRANS_STATUS,
+    BIZ_REQ_TIME, BIZ_RESP_TIME, BIZ_RESP_CODE, BIZ_RESP_DESC, CHECK_STATUS, UPDATE_BY,
+    UPDATE_DATE, CREATE_BY, CREATE_DATE, ARCHIVE_FLAG
   </sql>
   <select id="selectByExample" parameterType="team.yqby.platform.dto.model.FlowBizTransExample" resultMap="BaseResultMap">
     select
@@ -96,7 +100,7 @@
     </if>
   </select>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
-    select 
+    select
     <include refid="Base_Column_List" />
     from t_biz_trans
     where ID = #{id,jdbcType=BIGINT}
@@ -112,18 +116,20 @@
     </if>
   </delete>
   <insert id="insert" parameterType="team.yqby.platform.dto.model.FlowBizTrans">
-    insert into t_biz_trans (ID, ORDER_ID, BIZ_ID, 
-      PHONE, TRANS_STATUS, BIZ_REQ_TIME, 
-      BIZ_RESP_TIME, BIZ_RESP_CODE, BIZ_RESP_DESC, 
-      CHECK_STATUS, UPDATE_BY, UPDATE_DATE, 
-      CREATE_BY, CREATE_DATE, ARCHIVE_FLAG
-      )
-    values (#{id,jdbcType=BIGINT}, #{orderId,jdbcType=VARCHAR}, #{bizId,jdbcType=VARCHAR}, 
-      #{phone,jdbcType=VARCHAR}, #{transStatus,jdbcType=VARCHAR}, #{bizReqTime,jdbcType=TIMESTAMP}, 
-      #{bizRespTime,jdbcType=TIMESTAMP}, #{bizRespCode,jdbcType=VARCHAR}, #{bizRespDesc,jdbcType=VARCHAR}, 
-      #{checkStatus,jdbcType=VARCHAR}, #{updateBy,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP}, 
-      #{createBy,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, #{archiveFlag,jdbcType=VARCHAR}
-      )
+    insert into t_biz_trans (ID, ORDER_ID, BIZ_ID,
+    FLOW_ID, OUTTER_FLOW_ID, CURRENT_COST,
+    PHONE, TRANS_STATUS, BIZ_REQ_TIME,
+    BIZ_RESP_TIME, BIZ_RESP_CODE, BIZ_RESP_DESC,
+    CHECK_STATUS, UPDATE_BY, UPDATE_DATE,
+    CREATE_BY, CREATE_DATE, ARCHIVE_FLAG
+    )
+    values (#{id,jdbcType=BIGINT}, #{orderId,jdbcType=VARCHAR}, #{bizId,jdbcType=VARCHAR},
+    #{flowId,jdbcType=BIGINT}, #{outterFlowId,jdbcType=VARCHAR}, #{currentCost,jdbcType=BIGINT},
+    #{phone,jdbcType=VARCHAR}, #{transStatus,jdbcType=VARCHAR}, #{bizReqTime,jdbcType=TIMESTAMP},
+    #{bizRespTime,jdbcType=TIMESTAMP}, #{bizRespCode,jdbcType=VARCHAR}, #{bizRespDesc,jdbcType=VARCHAR},
+    #{checkStatus,jdbcType=VARCHAR}, #{updateBy,jdbcType=VARCHAR}, #{updateDate,jdbcType=TIMESTAMP},
+    #{createBy,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, #{archiveFlag,jdbcType=VARCHAR}
+    )
   </insert>
   <insert id="insertSelective" parameterType="team.yqby.platform.dto.model.FlowBizTrans">
     insert into t_biz_trans
@@ -136,6 +142,15 @@
       </if>
       <if test="bizId != null">
         BIZ_ID,
+      </if>
+      <if test="flowId != null">
+        FLOW_ID,
+      </if>
+      <if test="outterFlowId != null">
+        OUTTER_FLOW_ID,
+      </if>
+      <if test="currentCost != null">
+        CURRENT_COST,
       </if>
       <if test="phone != null">
         PHONE,
@@ -183,6 +198,15 @@
       </if>
       <if test="bizId != null">
         #{bizId,jdbcType=VARCHAR},
+      </if>
+      <if test="flowId != null">
+        #{flowId,jdbcType=BIGINT},
+      </if>
+      <if test="outterFlowId != null">
+        #{outterFlowId,jdbcType=VARCHAR},
+      </if>
+      <if test="currentCost != null">
+        #{currentCost,jdbcType=BIGINT},
       </if>
       <if test="phone != null">
         #{phone,jdbcType=VARCHAR},
@@ -240,6 +264,15 @@
       <if test="record.bizId != null">
         BIZ_ID = #{record.bizId,jdbcType=VARCHAR},
       </if>
+      <if test="record.flowId != null">
+        FLOW_ID = #{record.flowId,jdbcType=BIGINT},
+      </if>
+      <if test="record.outterFlowId != null">
+        OUTTER_FLOW_ID = #{record.outterFlowId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.currentCost != null">
+        CURRENT_COST = #{record.currentCost,jdbcType=BIGINT},
+      </if>
       <if test="record.phone != null">
         PHONE = #{record.phone,jdbcType=VARCHAR},
       </if>
@@ -284,20 +317,23 @@
   <update id="updateByExample" parameterType="map">
     update t_biz_trans
     set ID = #{record.id,jdbcType=BIGINT},
-      ORDER_ID = #{record.orderId,jdbcType=VARCHAR},
-      BIZ_ID = #{record.bizId,jdbcType=VARCHAR},
-      PHONE = #{record.phone,jdbcType=VARCHAR},
-      TRANS_STATUS = #{record.transStatus,jdbcType=VARCHAR},
-      BIZ_REQ_TIME = #{record.bizReqTime,jdbcType=TIMESTAMP},
-      BIZ_RESP_TIME = #{record.bizRespTime,jdbcType=TIMESTAMP},
-      BIZ_RESP_CODE = #{record.bizRespCode,jdbcType=VARCHAR},
-      BIZ_RESP_DESC = #{record.bizRespDesc,jdbcType=VARCHAR},
-      CHECK_STATUS = #{record.checkStatus,jdbcType=VARCHAR},
-      UPDATE_BY = #{record.updateBy,jdbcType=VARCHAR},
-      UPDATE_DATE = #{record.updateDate,jdbcType=TIMESTAMP},
-      CREATE_BY = #{record.createBy,jdbcType=VARCHAR},
-      CREATE_DATE = #{record.createDate,jdbcType=TIMESTAMP},
-      ARCHIVE_FLAG = #{record.archiveFlag,jdbcType=VARCHAR}
+    ORDER_ID = #{record.orderId,jdbcType=VARCHAR},
+    BIZ_ID = #{record.bizId,jdbcType=VARCHAR},
+    FLOW_ID = #{record.flowId,jdbcType=BIGINT},
+    OUTTER_FLOW_ID = #{record.outterFlowId,jdbcType=VARCHAR},
+    CURRENT_COST = #{record.currentCost,jdbcType=BIGINT},
+    PHONE = #{record.phone,jdbcType=VARCHAR},
+    TRANS_STATUS = #{record.transStatus,jdbcType=VARCHAR},
+    BIZ_REQ_TIME = #{record.bizReqTime,jdbcType=TIMESTAMP},
+    BIZ_RESP_TIME = #{record.bizRespTime,jdbcType=TIMESTAMP},
+    BIZ_RESP_CODE = #{record.bizRespCode,jdbcType=VARCHAR},
+    BIZ_RESP_DESC = #{record.bizRespDesc,jdbcType=VARCHAR},
+    CHECK_STATUS = #{record.checkStatus,jdbcType=VARCHAR},
+    UPDATE_BY = #{record.updateBy,jdbcType=VARCHAR},
+    UPDATE_DATE = #{record.updateDate,jdbcType=TIMESTAMP},
+    CREATE_BY = #{record.createBy,jdbcType=VARCHAR},
+    CREATE_DATE = #{record.createDate,jdbcType=TIMESTAMP},
+    ARCHIVE_FLAG = #{record.archiveFlag,jdbcType=VARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -310,6 +346,15 @@
       </if>
       <if test="bizId != null">
         BIZ_ID = #{bizId,jdbcType=VARCHAR},
+      </if>
+      <if test="flowId != null">
+        FLOW_ID = #{flowId,jdbcType=BIGINT},
+      </if>
+      <if test="outterFlowId != null">
+        OUTTER_FLOW_ID = #{outterFlowId,jdbcType=VARCHAR},
+      </if>
+      <if test="currentCost != null">
+        CURRENT_COST = #{currentCost,jdbcType=BIGINT},
       </if>
       <if test="phone != null">
         PHONE = #{phone,jdbcType=VARCHAR},
@@ -354,6 +399,9 @@
     update t_biz_trans
     set ORDER_ID = #{orderId,jdbcType=VARCHAR},
       BIZ_ID = #{bizId,jdbcType=VARCHAR},
+      FLOW_ID = #{flowId,jdbcType=BIGINT},
+      OUTTER_FLOW_ID = #{outterFlowId,jdbcType=VARCHAR},
+      CURRENT_COST = #{currentCost,jdbcType=BIGINT},
       PHONE = #{phone,jdbcType=VARCHAR},
       TRANS_STATUS = #{transStatus,jdbcType=VARCHAR},
       BIZ_REQ_TIME = #{bizReqTime,jdbcType=TIMESTAMP},
