@@ -15,7 +15,6 @@ import lombok.ToString;
 @Setter
 public class PhoneBelongDto {
 
-    @JSONField(name = "phoneBelong")
     private String phoneBelong;
 
 }
