@@ -96,4 +96,9 @@ public class FlowRechargeService {
        //3.更新业务交易状态
         flowRechargeManager.updateBizTransStatus(bizNotifyReq);
     }
+
+//    public static void main(String[] args) {
+//        PayNotifyRes payNotifyRes = new FlowRechargeManager().recharge("15317110001", PublicConfig.FLOW_CHANNEL_ID, "ctcc_10_M_sh", DateUtil.getCurrent(), NumberUtil.getBizOrderNoRandom());
+//        System.out.println(payNotifyRes);
+//    }
 }

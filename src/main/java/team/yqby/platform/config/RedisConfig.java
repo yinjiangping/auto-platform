@@ -45,7 +45,9 @@ public class RedisConfig extends CachingConfigurerSupport {
     public CacheManager cacheManager(@SuppressWarnings("rawtypes") RedisTemplate redisTemplate) {
         RedisCacheManager rcm = new RedisCacheManager(redisTemplate);
         Map<String, Long> map = new HashMap();
-        map.put("redisKey", 45L);
+//        map.put("redisKey", 45L);
+        map.put("accessTokenCache", 6000L);
+        map.put("jssApiTicketCache", 6000L);
         rcm.setExpires(map);
         return rcm;
     }
