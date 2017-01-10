@@ -55,7 +55,7 @@ public class FlowTicketService {
      * @param openId
      * @return
      */
-    public PaySignRes queryJsApiTicketEnc(String openId) {
+    public PaySignRes queryJsApiTicketEnc(String openId,String url) {
 
         //1.校验openId是否存在
         flowTicketManager.checkOpenIdIsExpires(redisUtil.get(openId));
@@ -67,7 +67,7 @@ public class FlowTicketService {
         String jsApiTicket = flowTicketManager.queryJssApiTicket(accessToken);
 
         //4.验证参数签名
-        PaySignRes paySignRes = flowTicketManager.getPaySignRes(jsApiTicket);
+        PaySignRes paySignRes = flowTicketManager.getPaySignRes(jsApiTicket,url);
 
         return paySignRes;
     }

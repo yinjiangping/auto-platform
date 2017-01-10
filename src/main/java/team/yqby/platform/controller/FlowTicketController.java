@@ -53,13 +53,12 @@ public class FlowTicketController {
      */
     @RequestMapping(value = "/paySign")
     @ResponseBody
-    public Response<PaySignRes> paySign(String openID) {
+    public Response<PaySignRes> paySign(String openID, String url) {
         try {
-            PaySignRes paySignRes = flowTicketService.queryJsApiTicketEnc(openID);
+            PaySignRes paySignRes = flowTicketService.queryJsApiTicketEnc(openID, url);
             if (StringUtils.isEmpty(paySignRes.getSignature())) {
                 return new Response<>(ServiceErrorCode.ERROR_CODE_A10008);
             }
-
             return new Response<>(paySignRes);
         } catch (Exception e) {
             log.error("paySign exception,error", e);

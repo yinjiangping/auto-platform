@@ -125,12 +125,16 @@ public class FlowTicketManager {
      * @param jsApiTicket
      * @return
      */
-    public PaySignRes getPaySignRes(String jsApiTicket) {
+    public PaySignRes getPaySignRes(String jsApiTicket,String url) {
         PaySignRes paySignRes = new PaySignRes();
         paySignRes.setAppId(PublicConfig.APP_ID);
         paySignRes.setNonceStr(MD5Util.MD5Encode(Joiner.on("&").join(jsApiTicket, PublicConfig.MCH_KEY)));
         paySignRes.setTimeStamp(System.currentTimeMillis());
-        paySignRes.setUrl("http://www.djtx.com.cn/main.html");
+        if(StringUtils.isNotEmpty(url)){
+            paySignRes.setUrl(url);
+        }else{
+            paySignRes.setUrl("http://www.djtx.com.cn/");
+        }
         paySignRes.setSignature(WeChatXmlUtil.getSha1Sign(BeanToMapUtil.convertBean(paySignRes, ""), PublicConfig.MCH_KEY));
         return paySignRes;
     }
