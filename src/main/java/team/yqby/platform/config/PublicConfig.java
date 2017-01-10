@@ -31,8 +31,8 @@ public class PublicConfig {
     public static final String PAY_NOTIFY_URL = "http://www.djtx.com.cn/payCallBack";
 
     public static final String GOODS_NAME="德翼-流量充值";
-    //  TODO 微信使用    JSAPI
-    public static final String TRADE_TYPE="NATIVE";
+    //  TODO 微信使用    JSAPI  测试用 NATIVE
+    public static final String TRADE_TYPE="JSAPI";
 
     public static final String FLOW_CHANNEL_ID="qidian";
 
