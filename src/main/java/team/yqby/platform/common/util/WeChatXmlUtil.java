@@ -15,6 +15,7 @@ import team.yqby.platform.common.emodel.ServiceErrorCode;
 import team.yqby.platform.config.PublicConfig;
 import team.yqby.platform.exception.AutoPlatformException;
 
+import java.security.DigestException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -124,5 +125,16 @@ public class WeChatXmlUtil {
         }
         builder.append("&").append("key").append("=").append(key);
         return MD5Util.MD5Encode(builder.toString()).toUpperCase();
+    }
+
+    public static String getSha1Sign(Map<String, Object> params, String key) {
+        String sha1SignStr = "";
+        try {
+            params.put("key", key);
+            sha1SignStr = Sha1Util.SHA1(params);
+        } catch (DigestException e) {
+            log.error("getSha1Sign exception ,error", e);
+        }
+        return sha1SignStr;
     }
 }

@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.http.*;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -154,6 +155,36 @@ public class WebCall {
             UrlEncodedFormEntity entity = new UrlEncodedFormEntity(formParams, PublicConfig.UTF_8);
             httpPost.setEntity(entity);
             HttpResponse httpResponse = closeableHttpClient.execute(httpPost);
+            if (httpResponse.getStatusLine().getStatusCode() == org.apache.commons.httpclient.HttpStatus.SC_OK) {
+                HttpEntity httpEntity = httpResponse.getEntity();
+                resStr = EntityUtils.toString(httpEntity, "UTF-8");
+            }
+            closeableHttpClient.close();
+        } catch (Exception e) {
+            log.error("closeableHttpClient requestUrl:{},exception,{}", url, e.getMessage());
+            throw new AutoPlatformException(ServiceErrorCode.ERROR_CODE_F777777.getResCode(), ServiceErrorCode.ERROR_CODE_F777777.getResDesc());
+        }
+        log.info("closeableHttpClientPost responseContent:{}", resStr);
+        return resStr;
+    }
+
+
+    /**
+     * HTTP同步POST请求
+     *
+     * @param url        请求地址
+     * @return
+     */
+    public static String closeableHttpClientGet(String url) {
+        String resStr = "";
+        HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
+        RequestConfig config = RequestConfig.custom().setSocketTimeout(60000).setConnectTimeout(3000).build();
+        CloseableHttpClient closeableHttpClient = httpClientBuilder.build();
+        HttpGet httpGet = new HttpGet(url);
+        httpGet.setConfig(config);
+        try {
+            log.info("closeableHttpClientPost requestUrl:{}", url);
+            HttpResponse httpResponse = closeableHttpClient.execute(httpGet);
             if (httpResponse.getStatusLine().getStatusCode() == org.apache.commons.httpclient.HttpStatus.SC_OK) {
                 HttpEntity httpEntity = httpResponse.getEntity();
                 resStr = EntityUtils.toString(httpEntity, "UTF-8");

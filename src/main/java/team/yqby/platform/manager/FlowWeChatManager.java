@@ -122,16 +122,16 @@ public class FlowWeChatManager {
             String responseXml = WebCall.xmlSyncSend(PublicConfig.WX_CREATE_ORDER_URL, requestXml);
             WeChatXmlUtil weChatXmlUtil = WeChatXmlUtil.fromXML(responseXml);
             //下单成功
-            updateOrderStatus(orderNo, TransStatusEnum.WAIT_PAY.getStatus(), "", "", null);
+            updateOrderStatus(orderNo, "", TransStatusEnum.WAIT_PAY.getStatus(), weChatXmlUtil.getReturn_code(), weChatXmlUtil.getReturn_msg(), new Date());
             return weChatXmlUtil;
         } catch (AutoPlatformException e) {
             //下单失败
-            updateOrderStatus(orderNo, TransStatusEnum.ORDER_FAIL.getStatus(), "", "", null);
+            updateOrderStatus(orderNo, "", TransStatusEnum.ORDER_FAIL.getStatus(), e.getCode(), e.getMessage(), new Date());
             log.error("createWeChatOrder AutoPlatformException error,", e);
             throw new AutoPlatformException(e.getCode(), e.getMessage());
         } catch (Exception e) {
             //下单失败
-            updateOrderStatus(orderNo, TransStatusEnum.ORDER_FAIL.getStatus(), "", "", null);
+            updateOrderStatus(orderNo, "", TransStatusEnum.ORDER_FAIL.getStatus(), ServiceErrorCode.ERROR_CODE_A10003.getResCode(), e.getMessage(), new Date());
             log.error("createWeChatOrder AutoPlatformException error,", e);
             throw new AutoPlatformException(ServiceErrorCode.ERROR_CODE_A10003.getResCode(), e.getMessage());
         }
@@ -143,9 +143,10 @@ public class FlowWeChatManager {
      * @param orderNo
      * @param transStatus
      */
-    public void updateOrderStatus(String orderNo, String transStatus, String payResCode, String payResDesc, Date payResDate) {
+    public void updateOrderStatus(String orderNo, String prePayId, String transStatus, String payResCode, String payResDesc, Date payResDate) {
         FlowOrder flowOrder = new FlowOrder();
         flowOrder.setTransStatus(transStatus);
+        flowOrder.setPrepayId(prePayId);
         flowOrder.setPayRespCode(payResCode);
         flowOrder.setPayRespDesc(payResDesc);
         flowOrder.setPayRespTime(payResDate);
@@ -192,22 +193,22 @@ public class FlowWeChatManager {
         }
         //2.校验支付状态
         if (!PublicConfig.CALL_SUCCESS.equals(payNotifyReq.getReturn_code())) {
-            updateOrderStatus(payNotifyReq.getOut_trade_no(), TransStatusEnum.PAY_FAIL.getStatus(), payNotifyReq.getResult_code(), payNotifyReq.getReturn_msg(), DateUtil.parse(payNotifyReq.getTime_end(), DateUtil.fullPattern));
+            updateOrderStatus(payNotifyReq.getOut_trade_no(), payNotifyReq.getTransaction_id(), TransStatusEnum.PAY_FAIL.getStatus(), payNotifyReq.getResult_code(), payNotifyReq.getReturn_msg(), DateUtil.parse(payNotifyReq.getTime_end(), DateUtil.fullPattern));
             throw new AutoPlatformException(payNotifyReq.getResult_code(), payNotifyReq.getReturn_msg());
         }
         if (!PublicConfig.CALL_SUCCESS.equals(payNotifyReq.getResult_code())) {
-            updateOrderStatus(payNotifyReq.getOut_trade_no(), TransStatusEnum.PAY_FAIL.getStatus(), payNotifyReq.getErr_code(), payNotifyReq.getErr_code_des(), DateUtil.parse(payNotifyReq.getTime_end(), DateUtil.fullPattern));
+            updateOrderStatus(payNotifyReq.getOut_trade_no(), payNotifyReq.getTransaction_id(), TransStatusEnum.PAY_FAIL.getStatus(), payNotifyReq.getErr_code(), payNotifyReq.getErr_code_des(), DateUtil.parse(payNotifyReq.getTime_end(), DateUtil.fullPattern));
             throw new AutoPlatformException(payNotifyReq.getErr_code(), payNotifyReq.getErr_code_des());
         }
         //3.校验SIGN签名
         String sign = WeChatXmlUtil.getSign(BeanToMapUtil.convertBean(payNotifyReq, "sign"), PublicConfig.MCH_KEY);
         if (!sign.equals(payNotifyReq.getSign())) {
             log.error("订单号:{},请求的SIGN:{},生成的SIGN:{}", payNotifyReq.getOut_trade_no(), payNotifyReq.getSign(), sign);
-            updateOrderStatus(payNotifyReq.getOut_trade_no(), TransStatusEnum.PAY_FAIL.getStatus(), ServiceErrorCode.ERROR_CODE_A10005.getResCode(), ServiceErrorCode.ERROR_CODE_A10005.getResDesc(), DateUtil.parse(payNotifyReq.getTime_end(), DateUtil.fullPattern));
+            updateOrderStatus(payNotifyReq.getOut_trade_no(), payNotifyReq.getTransaction_id(), TransStatusEnum.PAY_FAIL.getStatus(), ServiceErrorCode.ERROR_CODE_A10005.getResCode(), ServiceErrorCode.ERROR_CODE_A10005.getResDesc(), DateUtil.parse(payNotifyReq.getTime_end(), DateUtil.fullPattern));
             throw new AutoPlatformException(ServiceErrorCode.ERROR_CODE_A10005);
         }
         //4.更新支付状态
-        updateOrderStatus(payNotifyReq.getOut_trade_no(), TransStatusEnum.PAY_SUC.getStatus(), payNotifyReq.getReturn_code(), payNotifyReq.getReturn_msg(), DateUtil.parse(payNotifyReq.getTime_end(), DateUtil.fullPattern));
+        updateOrderStatus(payNotifyReq.getOut_trade_no(), payNotifyReq.getTransaction_id(), TransStatusEnum.PAY_SUC.getStatus(), payNotifyReq.getReturn_code(), payNotifyReq.getReturn_msg(), DateUtil.parse(payNotifyReq.getTime_end(), DateUtil.fullPattern));
     }
 
     /**
