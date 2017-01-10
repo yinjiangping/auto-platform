@@ -171,7 +171,7 @@ public class FlowWeChatManager {
         flowOrderRes.setAppId(weChatXmlUtil.getAppid());
         flowOrderRes.setTimeStamp(System.currentTimeMillis());
         flowOrderRes.setNonceStr(MD5Util.MD5Encode(Joiner.on("&").join(weChatXmlUtil.getPrepay_id(), PublicConfig.MCH_KEY)));
-        flowOrderRes.setPack_age(packageStr);
+        flowOrderRes.setPackage_gjz(packageStr);
         flowOrderRes.setSignType(PublicConfig.SIGN_TYPE);
         try {
             flowOrderRes.setPaySign(WeChatXmlUtil.getSign(BeanToMapUtil.convertBean(flowOrderRes, ""), PublicConfig.MCH_KEY));
