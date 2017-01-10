@@ -24,7 +24,7 @@ public class FlowOrderRes {
     private String nonceStr;
     //订单详情扩展字符串
     @JSONField(name = "package")
-    private String pack_age;
+    private String package_gjz;
     //签名方式
     private String signType;
     //签名
