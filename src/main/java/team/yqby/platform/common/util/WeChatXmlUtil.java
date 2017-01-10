@@ -118,7 +118,7 @@ public class WeChatXmlUtil {
             if (StringUtils.isBlank(String.valueOf(v))) {
                 continue;
             }
-            builder.append(k).append("=").append(v).append("&");
+            builder.append(k.replace("_gjz","")).append("=").append(v).append("&");
         }
         if (!sortMap.isEmpty()) {
             builder.deleteCharAt(builder.length() - 1);
