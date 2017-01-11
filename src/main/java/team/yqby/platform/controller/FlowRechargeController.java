@@ -51,7 +51,7 @@ public class FlowRechargeController {
 
             log.info("createOrder finished, openId:{}, response:{}", flowOrderReq.getOpenID(), flowOrderRes);
         } catch (AutoPlatformException e) {
-            log.error("createOrder meet error, openId:{}, response:{}", flowOrderReq.getOpenID(), e.getMessage());
+            log.error("createOrder meet error, openId:{}, response:{}", flowOrderReq.getOpenID(), e);
             return new Response<>(e.getCode(), e.getMessage());
         } catch (Exception e) {
             log.error("createOrder meet error, openId:{}, response:{}", flowOrderReq.getOpenID(), Throwables.getStackTraceAsString(e));
@@ -83,13 +83,14 @@ public class FlowRechargeController {
             log.info("payCallBack finished, payNotifyReq:{}, response:{}", payNotifyRes);
             return payNotifyRes;
         } catch (AutoPlatformException e) {
-            log.error("payCallBack meet error, ", e.getMessage());
+            log.error("payCallBack meet error, ", e);
             return new PayNotifyRes(e.getCode(), e.getMessage());
         } catch (Exception e) {
             log.error("payCallBack meet error, ", Throwables.getStackTraceAsString(e));
             return new PayNotifyRes(ServiceErrorCode.ERROR_CODE_F99999.getResCode(), ServiceErrorCode.ERROR_CODE_F99999.getResDesc());
         }
     }
+
 
     /**
      * 业务结果通知
@@ -113,7 +114,7 @@ public class FlowRechargeController {
 
             log.info("bizCallBack finished, response:{}", result);
         } catch (AutoPlatformException e) {
-            log.error("bizCallBack meet error, ", e.getMessage());
+            log.error("bizCallBack meet error, ", e);
         } catch (Exception e) {
             log.error("bizCallBack meet error, ", Throwables.getStackTraceAsString(e));
         }
