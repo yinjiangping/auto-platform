@@ -71,7 +71,7 @@ public class FlowRechargeService {
         FlowOrder flowOrder = flowWeChatManager.queryPayOrderInfo(payNotifyReq.getOut_trade_no());
 
         //3.业务下单
-        String businessReqNo = flowRechargeManager.createBusinessOrder(payNotifyReq.getOut_trade_no(), flowOrder.getPhone(),flowOrder.getCurrentCost());
+        String businessReqNo = flowRechargeManager.createBusinessOrder(payNotifyReq.getOut_trade_no(), flowOrder.getPhone(), flowOrder.getCurrentCost());
 
         //4.流量充值
         PayNotifyRes payNotifyRes = flowRechargeManager.recharge(flowOrder.getPhone(), PublicConfig.FLOW_CHANNEL_ID, flowOrder.getOutterFlowId(), DateUtil.getCurrent(), businessReqNo);
@@ -91,9 +91,9 @@ public class FlowRechargeService {
         flowRechargeManager.checkBizParam(bizNotifyReq);
 
         //2.检查业务订单是否存在
-        flowRechargeManager.queryBizInfo(bizNotifyReq.getChannelorderid(),bizNotifyReq.getFlowrecord());
+        flowRechargeManager.queryBizInfo(bizNotifyReq.getChannelorderid(), bizNotifyReq.getFlowrecord());
 
-       //3.更新业务交易状态
+        //3.更新业务交易状态
         flowRechargeManager.updateBizTransStatus(bizNotifyReq);
     }
 

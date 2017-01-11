@@ -58,7 +58,7 @@ public class FlowTicketService {
     public PaySignRes queryJsApiTicketEnc(String openId,String url) {
 
         //1.校验openId是否存在
-        flowTicketManager.checkOpenIdIsExpires(redisUtil.get(openId));
+        flowTicketManager.checkOpenIdIsExpires(redisUtil.get(openId),openId);
 
         //2.获取access_token
         String accessToken = flowTicketManager.queryAccessToken();

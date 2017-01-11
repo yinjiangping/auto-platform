@@ -79,7 +79,7 @@ public class FlowWeChatManager {
         flowOrder.setCurrentCost(flowStock.getFlowCurrentCost());
         flowOrder.setPhone(productNo);
         flowOrder.setOpenId(openID);
-        flowOrder.setOutterFlowId(flowOrder.getOutterFlowId());
+        flowOrder.setOutterFlowId(flowStock.getOutterFlowId());
         flowOrder.setTransStatus(TransStatusEnum.INI.getStatus());
         flowOrder.setPayReqTime(new Date());
         flowOrder.setCheckStatus(CheckStatusEnum.STR_0.getCode());
@@ -146,13 +146,12 @@ public class FlowWeChatManager {
     public void updateOrderStatus(String orderNo, String prePayId, String transStatus, String payResCode, String payResDesc, Date payResDate) {
         FlowOrder flowOrder = new FlowOrder();
         flowOrder.setTransStatus(transStatus);
-        flowOrder.setPrepayId(prePayId);
         flowOrder.setPayRespCode(payResCode);
         flowOrder.setPayRespDesc(payResDesc);
         flowOrder.setPayRespTime(payResDate);
+        flowOrder.setPrepayId(prePayId);
         FlowOrderExample flowOrderExample = new FlowOrderExample();
-        FlowOrderExample.Criteria criteria = flowOrderExample.createCriteria();
-        criteria.andOrderIdEqualTo(orderNo).andArchiveFlagEqualTo(ArchiveFlagEnum.STR_0.getCode());
+        flowOrderExample.createCriteria().andOrderIdEqualTo(orderNo).andArchiveFlagEqualTo(ArchiveFlagEnum.STR_0.getCode());
         int i = flowOrderMapper.updateByExampleSelective(flowOrder, flowOrderExample);
         if (i == 0) {
             throw new AutoPlatformException(ServiceErrorCode.ERROR_CODE_A10007.getResCode(), ServiceErrorCode.ERROR_CODE_A10007.getResDesc());
@@ -182,6 +181,11 @@ public class FlowWeChatManager {
         return flowOrderRes;
     }
 
+    public static void main(String[] args) {
+        String test = "20170110215402";
+        System.out.println(DateUtil.parse(test, DateUtil.fullPattern));
+    }
+
     /**
      * @param payNotifyReq
      */
@@ -208,7 +212,7 @@ public class FlowWeChatManager {
             throw new AutoPlatformException(ServiceErrorCode.ERROR_CODE_A10005);
         }
         //4.更新支付状态
-        updateOrderStatus(payNotifyReq.getOut_trade_no(), payNotifyReq.getTransaction_id(), TransStatusEnum.PAY_SUC.getStatus(), payNotifyReq.getReturn_code(), payNotifyReq.getReturn_msg(), DateUtil.parse(payNotifyReq.getTime_end(), DateUtil.fullPattern));
+        updateOrderStatus(payNotifyReq.getOut_trade_no(),payNotifyReq.getTransaction_id(), TransStatusEnum.PAY_SUC.getStatus(), payNotifyReq.getReturn_code(), TransStatusEnum.PAY_SUC.getStatus(), DateUtil.parse(payNotifyReq.getTime_end(), DateUtil.fullPattern));
     }
 
     /**

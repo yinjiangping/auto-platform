@@ -63,8 +63,8 @@ public class FlowTicketManager {
     /**
      * 检验openId是否有效
      */
-    public void checkOpenIdIsExpires(Object openId) {
-        if (StringUtils.isBlank(String.valueOf(openId))) {
+    public void checkOpenIdIsExpires(Object cacheOpenId, String openId) {
+        if (!openId.equals(cacheOpenId)) {
             throw new AutoPlatformException(ServiceErrorCode.ERROR_CODE_A10009);
         }
     }
@@ -125,14 +125,14 @@ public class FlowTicketManager {
      * @param jsApiTicket
      * @return
      */
-    public PaySignRes getPaySignRes(String jsApiTicket,String url) {
+    public PaySignRes getPaySignRes(String jsApiTicket, String url) {
         PaySignRes paySignRes = new PaySignRes();
         paySignRes.setAppId(PublicConfig.APP_ID);
         paySignRes.setNonceStr(MD5Util.MD5Encode(Joiner.on("&").join(jsApiTicket, PublicConfig.MCH_KEY)));
         paySignRes.setTimeStamp(System.currentTimeMillis());
-        if(StringUtils.isNotEmpty(url)){
+        if (StringUtils.isNotEmpty(url)) {
             paySignRes.setUrl(url);
-        }else{
+        } else {
             paySignRes.setUrl("http://www.djtx.com.cn/");
         }
         paySignRes.setSignature(WeChatXmlUtil.getSha1Sign(BeanToMapUtil.convertBean(paySignRes, ""), PublicConfig.MCH_KEY));
