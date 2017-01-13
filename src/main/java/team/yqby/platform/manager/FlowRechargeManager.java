@@ -184,7 +184,7 @@ public class FlowRechargeManager {
         }
         log.info("queryBizInfo request param:{}", flowBizTransExample);
         List<FlowBizTrans> flowBizTransList = flowBizTransMapper.selectByExample(flowBizTransExample);
-        if (flowBizTransList != null) {
+        if (flowBizTransList != null && !flowBizTransList.isEmpty()) {
             throw new AutoPlatformException(ServiceErrorCode.ERROR_CODE_A10011);
         }
 
