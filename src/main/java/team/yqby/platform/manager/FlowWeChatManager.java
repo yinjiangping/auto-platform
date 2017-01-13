@@ -223,7 +223,7 @@ public class FlowWeChatManager {
         if (flowOrders == null || flowOrders.isEmpty()) {
             throw new AutoPlatformException(ServiceErrorCode.ERROR_CODE_A10006);
         }
-        if(!flowOrders.get(0).getTransStatus().equals(TransStatusEnum.PAY_SUC)){
+        if(!flowOrders.get(0).getTransStatus().equals(TransStatusEnum.PAY_SUC.getStatus())){
             throw new AutoPlatformException(ServiceErrorCode.ERROR_CODE_A10010);
         }
         return flowOrders.get(0);
