@@ -97,7 +97,7 @@ public class FlowRechargeManager {
             throw new AutoPlatformException(flowRechargeRes.getRet(), flowRechargeRes.getMsg());
         }
         updateStatusByOrderId(channelOrderId, TransStatusEnum.RECHARGE_SUC.getStatus(), flowRechargeRes.getRet(), flowRechargeRes.getMsg(), new Date(), flowRechargeRes.getFlowrecord());
-        return new PayNotifyRes(PublicConfig.CALL_SUCCESS, PublicConfig.CALL_SUCCESS);
+        return new PayNotifyRes(PublicConfig.CALL_SUCCESS, PublicConfig.OK);
     }
 
     /**

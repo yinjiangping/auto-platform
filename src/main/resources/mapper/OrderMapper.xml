@@ -487,6 +487,8 @@
       and a.OPEN_ID = #{openId,jdbcType=VARCHAR}
     </if>
     and a.FLOW_ID = b.FLOW_ID
+    and a.TRANS_STATUS != 'WAIT_PAY'
+    and a.TRANS_STATUS != 'ORDER_FAIL'
     and a.ARCHIVE_FLAG = '0'
     order by a.ORDER_TIME DESC
     limit #{startRow,jdbcType=BIGINT}, #{pageSize,jdbcType=BIGINT}
