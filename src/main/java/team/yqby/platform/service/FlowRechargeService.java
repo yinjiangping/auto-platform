@@ -67,13 +67,16 @@ public class FlowRechargeService {
         //1.校验支付状态更新支付结果
         flowWeChatManager.checkTransSafe(payNotifyReq);
 
-        //2.查询下单信息
-        FlowOrder flowOrder = flowWeChatManager.queryPayOrderInfo(payNotifyReq.getOut_trade_no());
+        //2.查询支付订单结果
+        FlowOrder flowOrder = flowWeChatManager.queryPayOrderResult(payNotifyReq.getOut_trade_no());
 
-        //3.业务下单
+        //3.查询业务订单结果
+        flowRechargeManager.queryBizOrderResult(payNotifyReq.getOut_trade_no(),"");
+
+        //4.业务下单
         String businessReqNo = flowRechargeManager.createBusinessOrder(payNotifyReq.getOut_trade_no(), flowOrder.getPhone(), flowOrder.getCurrentCost());
 
-        //4.流量充值
+        //5.流量充值
         PayNotifyRes payNotifyRes = flowRechargeManager.recharge(flowOrder.getPhone(), PublicConfig.FLOW_CHANNEL_ID, flowOrder.getOutterFlowId(), DateUtil.getCurrent(), businessReqNo);
 
         return payNotifyRes;
@@ -91,14 +94,10 @@ public class FlowRechargeService {
         flowRechargeManager.checkBizParam(bizNotifyReq);
 
         //2.检查业务订单是否存在
-        flowRechargeManager.queryBizInfo(bizNotifyReq.getChannelorderid(), bizNotifyReq.getFlowrecord());
+        flowRechargeManager.queryBizOrderInfo(bizNotifyReq.getChannelorderid(), bizNotifyReq.getFlowrecord());
 
         //3.更新业务交易状态
         flowRechargeManager.updateBizTransStatus(bizNotifyReq);
     }
 
-//    public static void main(String[] args) {
-//        PayNotifyRes payNotifyRes = new FlowRechargeManager().recharge("15317110001", PublicConfig.FLOW_CHANNEL_ID, "ctcc_10_M_sh", DateUtil.getCurrent(), NumberUtil.getBizOrderNoRandom());
-//        System.out.println(payNotifyRes);
-//    }
 }

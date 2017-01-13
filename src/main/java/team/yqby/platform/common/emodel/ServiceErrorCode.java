@@ -21,6 +21,8 @@ public enum ServiceErrorCode {
     ERROR_CODE_A10007("A10007", "数据库异常"),
     ERROR_CODE_A10008("A10008", "获取签名失败"),
     ERROR_CODE_A10009("A10009", "用户未登陆"),
+    ERROR_CODE_A10010("A10010", "订单未支付成功"),
+    ERROR_CODE_A10011("A10011", "已支付通过过"),
 
     ERROR_CODE_F99999("F99999", "服务器繁忙，请稍后重试!"),
     ERROR_CODE_F88888("F88888", "正在受理请求中"),

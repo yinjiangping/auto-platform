@@ -176,5 +176,14 @@
     <div id="msg_content"></div>
 </div>
 
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<div style="text-align: center">@2017 DeJia 沪ICP备12026958号 <a href="http://www.miitbeian.gov.cn" target="_blank">沪ICP备12026958号</a></div>
 </body>
 </html>
