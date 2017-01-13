@@ -50,12 +50,14 @@ public class FlowRechargeManager {
      * @param orderAmt 订单金额
      * @return
      */
-    public String createBusinessOrder(String orderNo, String phone, Long orderAmt) {
+    public String createBusinessOrder(String orderNo, String phone, Long orderAmt,String outTerFlowId,Long flowId) {
         FlowBizTrans flowBizTrans = new FlowBizTrans();
         flowBizTrans.setBizId(NumberUtil.getBizOrderNoRandom());
         flowBizTrans.setOrderId(orderNo);
         flowBizTrans.setPhone(phone);
         flowBizTrans.setCurrentCost(orderAmt);
+        flowBizTrans.setOutterFlowId(outTerFlowId);
+        flowBizTrans.setFlowId(flowId);
         flowBizTrans.setTransStatus(TransStatusEnum.INI.getStatus());
         flowBizTrans.setCheckStatus(CheckStatusEnum.STR_0.getCode());
         flowBizTrans.setArchiveFlag(ArchiveFlagEnum.STR_0.getCode());
@@ -171,14 +173,14 @@ public class FlowRechargeManager {
     /**
      * 查询业务订单结果
      *
-     * @param bizReqNo 渠道订单号
+     * @param orderId 订单号
      * @param bizResNo 业务订单号
      * @return
      */
-    public void queryBizOrderResult(String bizReqNo, String bizResNo) {
+    public void queryBizOrderResult(String orderId, String bizResNo) {
         FlowBizTransExample flowBizTransExample = new FlowBizTransExample();
         FlowBizTransExample.Criteria criteria = flowBizTransExample.createCriteria();
-        criteria.andBizIdEqualTo(bizReqNo).andArchiveFlagEqualTo(ArchiveFlagEnum.STR_0.getCode());
+        criteria.andOrderIdEqualTo(orderId).andArchiveFlagEqualTo(ArchiveFlagEnum.STR_0.getCode());
         if (StringUtils.isNotEmpty(bizResNo)) {
             criteria.andBizRespIdEqualTo(bizResNo);
         }
