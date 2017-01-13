@@ -3,6 +3,7 @@ package team.yqby.platform.manager;
 import com.alibaba.fastjson.JSON;
 import com.google.common.base.Joiner;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,7 +94,7 @@ public class FlowRechargeManager {
             updateStatusByOrderId(channelOrderId, TransStatusEnum.RECHARGE_FAIL.getStatus(), flowRechargeRes.getRet(), flowRechargeRes.getMsg(), new Date(), flowRechargeRes.getFlowrecord());
             throw new AutoPlatformException(flowRechargeRes.getRet(), flowRechargeRes.getMsg());
         }
-        updateStatusByOrderId(channelOrderId, TransStatusEnum.RECHARGE_SEND.getStatus(), flowRechargeRes.getRet(), flowRechargeRes.getMsg(), new Date(), flowRechargeRes.getFlowrecord());
+        updateStatusByOrderId(channelOrderId, TransStatusEnum.RECHARGE_SUC.getStatus(), flowRechargeRes.getRet(), flowRechargeRes.getMsg(), new Date(), flowRechargeRes.getFlowrecord());
         return new PayNotifyRes(flowRechargeRes.getRet(), flowRechargeRes.getMsg());
     }
 
@@ -145,15 +146,19 @@ public class FlowRechargeManager {
     }
 
     /**
-     * 查询业务订单信息
+     * 查询业务订单结果
      *
      * @param bizReqNo 渠道订单号
      * @param bizResNo 业务订单号
      * @return
      */
-    public FlowBizTrans queryBizInfo(String bizReqNo, String bizResNo) {
+    public FlowBizTrans queryBizOrderInfo(String bizReqNo, String bizResNo) {
         FlowBizTransExample flowBizTransExample = new FlowBizTransExample();
-        flowBizTransExample.createCriteria().andBizIdEqualTo(bizReqNo).andBizRespIdEqualTo(bizResNo).andArchiveFlagEqualTo(ArchiveFlagEnum.STR_0.getCode());
+        FlowBizTransExample.Criteria criteria = flowBizTransExample.createCriteria();
+        criteria.andBizIdEqualTo(bizReqNo).andArchiveFlagEqualTo(ArchiveFlagEnum.STR_0.getCode());
+        if (StringUtils.isNotEmpty(bizResNo)) {
+            criteria.andBizRespIdEqualTo(bizResNo);
+        }
         log.info("queryBizInfo request param:{}", flowBizTransExample);
         List<FlowBizTrans> flowBizTransList = flowBizTransMapper.selectByExample(flowBizTransExample);
         if (flowBizTransList == null || flowBizTransList.isEmpty()) {
@@ -161,6 +166,28 @@ public class FlowRechargeManager {
             throw new AutoPlatformException(ServiceErrorCode.ERROR_CODE_A10006);
         }
         return flowBizTransList.get(0);
+    }
+
+    /**
+     * 查询业务订单结果
+     *
+     * @param bizReqNo 渠道订单号
+     * @param bizResNo 业务订单号
+     * @return
+     */
+    public void queryBizOrderResult(String bizReqNo, String bizResNo) {
+        FlowBizTransExample flowBizTransExample = new FlowBizTransExample();
+        FlowBizTransExample.Criteria criteria = flowBizTransExample.createCriteria();
+        criteria.andBizIdEqualTo(bizReqNo).andArchiveFlagEqualTo(ArchiveFlagEnum.STR_0.getCode());
+        if (StringUtils.isNotEmpty(bizResNo)) {
+            criteria.andBizRespIdEqualTo(bizResNo);
+        }
+        log.info("queryBizInfo request param:{}", flowBizTransExample);
+        List<FlowBizTrans> flowBizTransList = flowBizTransMapper.selectByExample(flowBizTransExample);
+        if (flowBizTransList != null) {
+            throw new AutoPlatformException(ServiceErrorCode.ERROR_CODE_A10011);
+        }
+
     }
 
     /**
