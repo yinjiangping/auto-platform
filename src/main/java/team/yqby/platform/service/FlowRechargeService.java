@@ -68,13 +68,13 @@ public class FlowRechargeService {
         flowWeChatManager.checkTransSafe(payNotifyReq);
 
         //2.查询支付订单结果
-        FlowOrder flowOrder = flowWeChatManager.queryPayOrderResult(payNotifyReq.getOut_trade_no());
+        FlowOrder flowOrder = flowWeChatManager.queryPayOrderResult(payNotifyReq);
 
         //3.查询业务订单结果
         flowRechargeManager.queryBizOrderResult(payNotifyReq.getOut_trade_no(),"");
 
         //4.业务下单
-        String businessReqNo = flowRechargeManager.createBusinessOrder(payNotifyReq.getOut_trade_no(), flowOrder.getPhone(), flowOrder.getCurrentCost());
+        String businessReqNo = flowRechargeManager.createBusinessOrder(payNotifyReq.getOut_trade_no(), flowOrder.getPhone(), flowOrder.getCurrentCost(),flowOrder.getOutterFlowId(),flowOrder.getFlowId());
 
         //5.流量充值
         PayNotifyRes payNotifyRes = flowRechargeManager.recharge(flowOrder.getPhone(), PublicConfig.FLOW_CHANNEL_ID, flowOrder.getOutterFlowId(), DateUtil.getCurrent(), businessReqNo);

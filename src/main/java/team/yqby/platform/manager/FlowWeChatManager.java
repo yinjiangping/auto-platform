@@ -207,23 +207,29 @@ public class FlowWeChatManager {
             updateOrderStatus(payNotifyReq.getOut_trade_no(), payNotifyReq.getTransaction_id(), TransStatusEnum.PAY_FAIL.getStatus(), ServiceErrorCode.ERROR_CODE_A10005.getResCode(), ServiceErrorCode.ERROR_CODE_A10005.getResDesc(), DateUtil.parse(payNotifyReq.getTime_end(), DateUtil.fullPattern));
             throw new AutoPlatformException(ServiceErrorCode.ERROR_CODE_A10005);
         }
-        //4.更新支付状态
-        updateOrderStatus(payNotifyReq.getOut_trade_no(),payNotifyReq.getTransaction_id(), TransStatusEnum.PAY_SUC.getStatus(), payNotifyReq.getReturn_code(), TransStatusEnum.PAY_SUC.getStatus(), DateUtil.parse(payNotifyReq.getTime_end(), DateUtil.fullPattern));
     }
 
     /**
      * 查询支付订单结果
      *
-     * @param orderNo 订单号
+     * @param payNotifyReq 支付通知信息
      * @return
      */
-    public FlowOrder queryPayOrderResult(String orderNo) {
+    public FlowOrder queryPayOrderResult(PayNotifyReq payNotifyReq) {
         FlowOrderExample flowOrderExample = new FlowOrderExample();
-        flowOrderExample.createCriteria().andOrderIdEqualTo(orderNo).andArchiveFlagEqualTo(ArchiveFlagEnum.STR_0.getCode());
+        flowOrderExample.createCriteria().andOrderIdEqualTo(payNotifyReq.getOut_trade_no()).andArchiveFlagEqualTo(ArchiveFlagEnum.STR_0.getCode());
         List<FlowOrder> flowOrders = flowOrderMapper.selectByExample(flowOrderExample);
         if (flowOrders == null || flowOrders.isEmpty()) {
             throw new AutoPlatformException(ServiceErrorCode.ERROR_CODE_A10006);
         }
+        log.info("查询订单：{},{},{},{}",payNotifyReq.getOut_trade_no(),flowOrders.get(0).getTransStatus(),TransStatusEnum.PAY_SUC.getStatus(),flowOrders.get(0).getTransStatus().equals(TransStatusEnum.PAY_SUC.getStatus()));
+        if(flowOrders.get(0).getTransStatus().equals(TransStatusEnum.PAY_SUC.getStatus())){
+            log.error("订单已支付成功过,订单号:{}",payNotifyReq.getOut_trade_no());
+            throw new AutoPlatformException(ServiceErrorCode.ERROR_CODE_A10010);
+        }
+        //更新支付结果
+        updateOrderStatus(payNotifyReq.getOut_trade_no(),payNotifyReq.getTransaction_id(), TransStatusEnum.PAY_SUC.getStatus(), payNotifyReq.getReturn_code(), TransStatusEnum.PAY_SUC.getStatus(), DateUtil.parse(payNotifyReq.getTime_end(), DateUtil.fullPattern));
+
         return flowOrders.get(0);
     }
 }
