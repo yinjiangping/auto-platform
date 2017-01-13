@@ -120,7 +120,7 @@ public class FlowWeChatManager {
             weChatCreateOrder.setTrade_type(PublicConfig.TRADE_TYPE);
             weChatCreateOrder.setSign(WeChatXmlUtil.getSign(BeanToMapUtil.convertBean(weChatCreateOrder, ""), PublicConfig.MCH_KEY));
             String requestXml = WeChatXmlUtil.toXml(weChatCreateOrder).replace("__", "_");
-            String responseXml = WebCall.xmlSyncSend(PublicConfig.WX_CREATE_ORDER_URL, new String(requestXml.toString().getBytes("utf-8"), "iso8859-1"));
+            String responseXml = WebCall.xmlSyncSend(PublicConfig.WX_CREATE_ORDER_URL, requestXml);
             WeChatXmlUtil weChatXmlUtil = WeChatXmlUtil.fromXML(responseXml);
             //下单成功
             updateOrderStatus(orderNo, "", TransStatusEnum.WAIT_PAY.getStatus(), weChatXmlUtil.getReturn_code(), weChatXmlUtil.getReturn_msg(), new Date());
