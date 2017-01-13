@@ -84,7 +84,7 @@ public class FlowRechargeController {
             return payNotifyRes;
         } catch (AutoPlatformException e) {
             log.error("payCallBack meet error, ", e);
-            return new PayNotifyRes(e.getCode(), e.getMessage());
+            return new PayNotifyRes(PublicConfig.CALL_SUCCESS, PublicConfig.CALL_SUCCESS);
         } catch (Exception e) {
             log.error("payCallBack meet error, ", Throwables.getStackTraceAsString(e));
             return new PayNotifyRes(ServiceErrorCode.ERROR_CODE_F99999.getResCode(), ServiceErrorCode.ERROR_CODE_F99999.getResDesc());

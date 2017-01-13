@@ -22,6 +22,7 @@ import team.yqby.platform.exception.AutoPlatformException;
 import team.yqby.platform.mapper.FlowOrderMapper;
 import team.yqby.platform.mapper.FlowStockMapper;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.ParseException;
 import java.util.Date;
@@ -109,7 +110,7 @@ public class FlowWeChatManager {
             WeChatCreateOrder weChatCreateOrder = new WeChatCreateOrder();
             weChatCreateOrder.setAppid(PublicConfig.APP_ID);
             weChatCreateOrder.setMch_id(PublicConfig.MCH_ID);
-            weChatCreateOrder.setBody(new String(PublicConfig.GOODS_NAME.getBytes(),PublicConfig.UTF_8));
+            weChatCreateOrder.setBody(PublicConfig.GOODS_NAME);
             weChatCreateOrder.setNonce_str(MD5Util.MD5Encode(Joiner.on("&").join(orderNo, PublicConfig.MCH_KEY)));
             weChatCreateOrder.setNotify_url(PublicConfig.PAY_NOTIFY_URL);
             weChatCreateOrder.setOpenid(openId);
@@ -222,9 +223,6 @@ public class FlowWeChatManager {
         List<FlowOrder> flowOrders = flowOrderMapper.selectByExample(flowOrderExample);
         if (flowOrders == null || flowOrders.isEmpty()) {
             throw new AutoPlatformException(ServiceErrorCode.ERROR_CODE_A10006);
-        }
-        if(!flowOrders.get(0).getTransStatus().equals(TransStatusEnum.PAY_SUC)){
-            throw new AutoPlatformException(ServiceErrorCode.ERROR_CODE_A10010);
         }
         return flowOrders.get(0);
     }

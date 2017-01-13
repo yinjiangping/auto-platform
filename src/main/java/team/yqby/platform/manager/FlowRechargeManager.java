@@ -95,7 +95,7 @@ public class FlowRechargeManager {
             throw new AutoPlatformException(flowRechargeRes.getRet(), flowRechargeRes.getMsg());
         }
         updateStatusByOrderId(channelOrderId, TransStatusEnum.RECHARGE_SUC.getStatus(), flowRechargeRes.getRet(), flowRechargeRes.getMsg(), new Date(), flowRechargeRes.getFlowrecord());
-        return new PayNotifyRes(flowRechargeRes.getRet(), flowRechargeRes.getMsg());
+        return new PayNotifyRes(PublicConfig.CALL_SUCCESS, PublicConfig.CALL_SUCCESS);
     }
 
     /**
@@ -184,7 +184,7 @@ public class FlowRechargeManager {
         }
         log.info("queryBizInfo request param:{}", flowBizTransExample);
         List<FlowBizTrans> flowBizTransList = flowBizTransMapper.selectByExample(flowBizTransExample);
-        if (flowBizTransList != null) {
+        if (flowBizTransList != null && !flowBizTransList.isEmpty()) {
             throw new AutoPlatformException(ServiceErrorCode.ERROR_CODE_A10011);
         }
 

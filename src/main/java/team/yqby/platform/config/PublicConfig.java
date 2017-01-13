@@ -4,6 +4,8 @@ package team.yqby.platform.config;
 public class PublicConfig {
     //调用成功
     public static final String CALL_SUCCESS = "SUCCESS";
+    //成功
+    public static final String OK = "OK";
     //UTF-8编码方式
     public static final String UTF_8="UTF-8";
     //签名类型
@@ -30,7 +32,7 @@ public class PublicConfig {
 
     public static final String PAY_NOTIFY_URL = "http://www.djtx.com.cn/payCallBack";
 
-    public static final String GOODS_NAME="德翼-流量充值";
+    public static final String GOODS_NAME="DY-FlowRecharge";
     //  TODO 微信使用    JSAPI  测试用 NATIVE
     public static final String TRADE_TYPE="JSAPI";
 
