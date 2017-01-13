@@ -109,7 +109,7 @@ public class FlowWeChatManager {
             WeChatCreateOrder weChatCreateOrder = new WeChatCreateOrder();
             weChatCreateOrder.setAppid(PublicConfig.APP_ID);
             weChatCreateOrder.setMch_id(PublicConfig.MCH_ID);
-            weChatCreateOrder.setBody(new String(PublicConfig.GOODS_NAME.getBytes(),PublicConfig.UTF_8));
+            weChatCreateOrder.setBody(PublicConfig.GOODS_NAME);
             weChatCreateOrder.setNonce_str(MD5Util.MD5Encode(Joiner.on("&").join(orderNo, PublicConfig.MCH_KEY)));
             weChatCreateOrder.setNotify_url(PublicConfig.PAY_NOTIFY_URL);
             weChatCreateOrder.setOpenid(openId);
