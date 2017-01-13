@@ -219,7 +219,7 @@ public class FlowWeChatManager {
      */
     public FlowOrder queryPayOrderResult(String orderNo) {
         FlowOrderExample flowOrderExample = new FlowOrderExample();
-        flowOrderExample.createCriteria().andOrderIdNotEqualTo(orderNo).andArchiveFlagEqualTo(ArchiveFlagEnum.STR_0.getCode());
+        flowOrderExample.createCriteria().andOrderIdEqualTo(orderNo).andArchiveFlagEqualTo(ArchiveFlagEnum.STR_0.getCode());
         List<FlowOrder> flowOrders = flowOrderMapper.selectByExample(flowOrderExample);
         if (flowOrders == null || flowOrders.isEmpty()) {
             throw new AutoPlatformException(ServiceErrorCode.ERROR_CODE_A10006);
