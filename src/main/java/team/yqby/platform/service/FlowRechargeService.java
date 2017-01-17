@@ -32,6 +32,8 @@ public class FlowRechargeService {
     private FlowWeChatManager flowWeChatManager;
     @Autowired
     private FlowRechargeManager flowRechargeManager;
+    @Autowired
+    private FlowPhoneBinService flowPhoneBinService;
 
     /**
      * 流量充值下单
@@ -76,8 +78,11 @@ public class FlowRechargeService {
         //4.业务下单
         String businessReqNo = flowRechargeManager.createBusinessOrder(payNotifyReq.getOut_trade_no(), flowOrder.getPhone(), flowOrder.getCurrentCost(),flowOrder.getOutterFlowId(),flowOrder.getFlowId());
 
-        //5.流量充值
-        PayNotifyRes payNotifyRes = flowRechargeManager.recharge(flowOrder.getPhone(), PublicConfig.FLOW_CHANNEL_ID, flowOrder.getOutterFlowId(), DateUtil.getCurrent(), businessReqNo);
+        //5.判断归属地
+        String carrierName = flowPhoneBinService.getPhoneCarrier(flowOrder.getPhone()).getCarrierName();
+
+        //6.流量充值
+        PayNotifyRes payNotifyRes = flowRechargeManager.recharge(flowOrder.getPhone(), PublicConfig.FLOW_CHANNEL_ID, flowOrder.getOutterFlowId(), DateUtil.getCurrent(), businessReqNo,carrierName);
 
         return payNotifyRes;
     }

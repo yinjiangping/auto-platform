@@ -19,6 +19,7 @@ public class ApiUrls {
     /**    查询账单  **/
     public static final String QUERY_BILL_URL="/service/insteadPayBill.do";
 
+    /**  查询余额 **/
     public static final String QUERY_ACCOUNT_BALANCE="/service/my/queryCardBalance";
 
     /**    创建订单  **/
