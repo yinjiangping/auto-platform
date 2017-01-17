@@ -39,6 +39,9 @@
                 $("#msg_content").text(event.data.split("&")[1]);
                 document.getElementById('msg_win').style.display = "block";
                 Message.init();
+                $("#queryPay").removeAttr("disabled");
+                $("#upload").removeAttr("disabled");
+                $("#queryPay").val("提交");
             } else {
                 setMessageInnerHTML(event.data);
             }
@@ -91,7 +94,9 @@
             alert("请上传xlsx格式的文件!");
             return;
         }
-        $("table tbody tr").eq(0).nextAll().remove();
+        $("#queryPay").val("正在上传");
+        $("#queryPay").attr("disabled", "disabled");
+        $("#upload").attr("disabled", "disabled");
         var formData = new FormData();
         formData.append("file", $("#upload")[0].files[0]);
         $.ajax({
@@ -106,14 +111,18 @@
             },
             success: function (responseStr) {
                 if (responseStr != '') {
+                    $("#queryPay").val("上传成功");
+                    $("table tbody tr").eq(0).nextAll().remove();
                     connectChatServer(responseStr);
                     console.log("成功:" + responseStr);
                 } else {
                     console.log("失败");
+                    $("#queryPay").val("文件上传失败，文件大小可能超限");
                 }
             },
             error: function (responseStr) {
                 console.log("error");
+                $("#queryPay").val("文件上传失败，请检查网络是否连接");
             }
         });
 
@@ -138,11 +147,11 @@
     <input id="queryPay" type="submit" onclick="uploadFile()" class="ui blue submit button" value="提交">
 </div>
 <div style="text-align: right;width:92%">&nbsp;&nbsp;<input id="export"
-                                                            onclick="$('#PrintA').tableExport({ type: 'csv', separator: ';', escape: 'false' });"
+                                                            onclick="$('#PrintA').tableExport({ type: 'txt', separator: ';', escape: 'false' });"
                                                             type="button" class="ui submit button" value="导出"
                                                             style="background-color: #fff;"></div>
-<div class="big2" style="margin: auto; width: 100%; height: 100px; overflow: hidden;">
-    <div class="small2" id="showMsg" style="margin: auto; width: 100%; height: 100px; -ms-overflow-y: auto;">
+<div class="big2" style="margin: auto; width: 100%; height: 250px; overflow: hidden;">
+    <div class="small2" id="showMsg" style="margin: auto; width: 100%; height: 250px; overflow-y:auto">
         <table align="center" id="PrintA" border="1" cellspacing="0" cellpadding="0"
                style="border-collapse:collapse">
             <tBody>
@@ -176,11 +185,6 @@
     <div id="msg_content"></div>
 </div>
 
-<br>
-<br>
-<br>
-<br>
-<br>
 <br>
 <br>
 <br>

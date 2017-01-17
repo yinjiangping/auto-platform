@@ -19,7 +19,7 @@ public class ApiUrls {
     /**    查询账单  **/
     public static final String QUERY_BILL_URL="/service/insteadPayBill.do";
 
-    public static final String QUERY_ACCOUNT_BALANCE="/my/queryCardBalance";
+    public static final String QUERY_ACCOUNT_BALANCE="/service/my/queryCardBalance";
 
     /**    创建订单  **/
     public static final String CREATE_ORDER_URL="/service/billRecharge/doPay.do";
