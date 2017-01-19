@@ -12,11 +12,15 @@ import team.yqby.platform.common.enums.ArchiveFlagEnum;
 import team.yqby.platform.common.enums.CarrierNameEnum;
 import team.yqby.platform.common.enums.ErrorCodeEnum;
 import team.yqby.platform.common.enums.FlowPhoneBelongEnum;
+import team.yqby.platform.config.PublicConfig;
+import team.yqby.platform.dto.model.res.PayNotifyRes;
 import team.yqby.platform.dto.query.PhoneBelongDto;
 import team.yqby.platform.dto.Response;
 import team.yqby.platform.dto.model.FlowPhoneBin;
 import team.yqby.platform.dto.model.FlowPhoneBinExample;
+import team.yqby.platform.exception.AutoPlatformException;
 import team.yqby.platform.mapper.FlowPhoneBinMapper;
+import team.yqby.platform.service.FlowPhoneBinService;
 
 import java.util.List;
 
@@ -30,7 +34,7 @@ import java.util.List;
 public class FlowPhoneBinInfoController {
 
     @Autowired
-    private FlowPhoneBinMapper flowPhoneBinMapper;
+    private FlowPhoneBinService flowPhoneBinService;
 
     @RequestMapping(value = "/queryBin", method = RequestMethod.POST)
     @ResponseBody
@@ -40,37 +44,15 @@ public class FlowPhoneBinInfoController {
         Response response;
 
         try {
-            if (StringUtils.isBlank(phone) || phone.trim().length() < 7) {
-                response = new Response(ErrorCodeEnum.ILLEGAL_DATA.getCode(),
-                    ErrorCodeEnum.ILLEGAL_DATA.getDesc());
-                return response;
-            }
+            //查询手机归属地
+            response = new Response(flowPhoneBinService.getPhoneCarrier(phone));
 
-            FlowPhoneBinExample example = new FlowPhoneBinExample();
-            FlowPhoneBinExample.Criteria criteria = example.createCriteria();
-            criteria.andArchiveFlagEqualTo(ArchiveFlagEnum.STR_0.getCode());
-            criteria.andPhoneBinEqualTo(phone.trim().substring(0, 7));
-
-            List<FlowPhoneBin> list = flowPhoneBinMapper.selectByExample(example);
-            PhoneBelongDto phoneBelongDto = new PhoneBelongDto();
-            // 查询不到归属地信息
-            if (null == list || list.size() < 1) {
-                // 非上海号码
-                phoneBelongDto.setPhoneBelong(FlowPhoneBelongEnum.NOT_SH_1.getCode());
-            } else {
-                //上海号码
-                phoneBelongDto.setPhoneBelong(
-                    (CarrierNameEnum.DX.getCode().equals(list.get(0).getCarrierName())
-                     && FlowConstant.CITY_CODE_021.equals(list.get(0).getCityCode()))
-                         ? FlowPhoneBelongEnum.SH_0.getCode()
-                         : FlowPhoneBelongEnum.NOT_SH_1.getCode());
-            }
-            response = new Response(phoneBelongDto);
-
+        } catch (AutoPlatformException e) {
+            log.error("查询手机号归属地发生异常：", e);
+            return new Response(e.getCode(), e.getMessage());
         } catch (Exception e) {
-            log.error("查询手机号归属地发生异常：{}", e);
-            response = new Response(ErrorCodeEnum.SYSTEM_ERROR.getCode(),
-                ErrorCodeEnum.SYSTEM_ERROR.getDesc());
+            log.error("查询手机号归属地发生异常：", e);
+            response = new Response(ErrorCodeEnum.SYSTEM_ERROR);
         }
 
         log.info("查询手机号归属地，结果为：{}", response);

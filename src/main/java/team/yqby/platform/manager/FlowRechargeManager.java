@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import team.yqby.platform.common.WebCall;
 import team.yqby.platform.common.emodel.ServiceErrorCode;
 import team.yqby.platform.common.enums.ArchiveFlagEnum;
+import team.yqby.platform.common.enums.CarrierNameEnum;
 import team.yqby.platform.common.enums.CheckStatusEnum;
 import team.yqby.platform.common.enums.TransStatusEnum;
 import team.yqby.platform.common.util.DateUtil;
@@ -79,9 +80,10 @@ public class FlowRechargeManager {
      * @param channelId      渠道编号
      * @param productId      产品编号
      * @param channelOrderId 渠道订单号
+     * @param carrierName   手机归属服务商：dx：电信，yd：移动，lt：联通
      * @return
      */
-    public PayNotifyRes recharge(String phone, String channelId, String productId, String timestamp, String channelOrderId) {
+    public PayNotifyRes recharge(String phone, String channelId, String productId, String timestamp, String channelOrderId,String carrierName) {
         List<NameValuePair> formParams = new ArrayList<>();
         formParams.add(new BasicNameValuePair("phone", phone));
         formParams.add(new BasicNameValuePair("channelid", channelId));
@@ -96,7 +98,9 @@ public class FlowRechargeManager {
             updateStatusByOrderId(channelOrderId, TransStatusEnum.RECHARGE_FAIL.getStatus(), flowRechargeRes.getRet(), flowRechargeRes.getMsg(), new Date(), flowRechargeRes.getFlowrecord());
             throw new AutoPlatformException(flowRechargeRes.getRet(), flowRechargeRes.getMsg());
         }
-        updateStatusByOrderId(channelOrderId, TransStatusEnum.RECHARGE_SUC.getStatus(), flowRechargeRes.getRet(), flowRechargeRes.getMsg(), new Date(), flowRechargeRes.getFlowrecord());
+        //判断归属地
+        String transStatus = CarrierNameEnum.DX.getCode().equals(carrierName)?TransStatusEnum.RECHARGE_SUC.getStatus():TransStatusEnum.RECHARGE_SEND.getStatus();
+        updateStatusByOrderId(channelOrderId, transStatus, flowRechargeRes.getRet(), flowRechargeRes.getMsg(), new Date(), flowRechargeRes.getFlowrecord());
         return new PayNotifyRes(PublicConfig.CALL_SUCCESS, PublicConfig.OK);
     }
 
@@ -166,6 +170,9 @@ public class FlowRechargeManager {
         if (flowBizTransList == null || flowBizTransList.isEmpty()) {
             log.error("queryBizInfo result is null,bizResNo:{}", bizResNo);
             throw new AutoPlatformException(ServiceErrorCode.ERROR_CODE_A10006);
+        }
+        if(!TransStatusEnum.RECHARGE_SEND.getStatus().equals(flowBizTransList.get(0).getTransStatus())){
+            throw new AutoPlatformException(ServiceErrorCode.ERROR_CODE_A10011);
         }
         return flowBizTransList.get(0);
     }

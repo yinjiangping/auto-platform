@@ -17,4 +17,6 @@ public class PhoneBelongDto {
 
     private String phoneBelong;
 
+    private String carrierName;
+
 }
