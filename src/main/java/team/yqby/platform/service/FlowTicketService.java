@@ -28,9 +28,6 @@ public class FlowTicketService {
      * @return
      */
     public Response<String> queryOpenIDByCode(String code) {
-        iRedisService.set("test","111111111",10*10L);
-        String test = iRedisService.get("test");
-        log.info("test:{}",test);
         Response response;
         Response<FlowOpenIDRes> resResponse = flowTicketManager.queryByCode(code);
         if (resResponse.isSuccess()) {
