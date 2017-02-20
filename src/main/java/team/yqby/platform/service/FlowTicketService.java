@@ -1,16 +1,8 @@
 package team.yqby.platform.service;
 
-import com.google.common.base.Joiner;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
-import team.yqby.platform.common.util.BeanToMapUtil;
-import team.yqby.platform.common.util.MD5Util;
-import team.yqby.platform.common.util.RedisUtil;
-import team.yqby.platform.common.util.WeChatXmlUtil;
-import team.yqby.platform.config.PublicConfig;
 import team.yqby.platform.dto.Response;
 import team.yqby.platform.dto.model.res.FlowOpenIDRes;
 import team.yqby.platform.dto.model.res.PaySignRes;
@@ -24,7 +16,7 @@ import team.yqby.platform.manager.FlowTicketManager;
 @Slf4j
 public class FlowTicketService {
     @Autowired
-    private RedisUtil redisUtil;
+    private IRedisService iRedisService;
 
     @Autowired
     private FlowTicketManager flowTicketManager;
@@ -36,11 +28,14 @@ public class FlowTicketService {
      * @return
      */
     public Response<String> queryOpenIDByCode(String code) {
+        iRedisService.set("test","111111111",10*10L);
+        String test = iRedisService.get("test");
+        log.info("test:{}",test);
         Response response;
         Response<FlowOpenIDRes> resResponse = flowTicketManager.queryByCode(code);
         if (resResponse.isSuccess()) {
             String openId = resResponse.getResult().getOpenid();
-            redisUtil.set(openId, openId, 60 * 10L);
+            iRedisService.set(openId, openId, 60 * 10L);
             response = new Response(openId);
         } else {
             response = new Response(resResponse.getErrorCode(), resResponse.getErrorMsg());
@@ -55,10 +50,10 @@ public class FlowTicketService {
      * @param openId
      * @return
      */
-    public PaySignRes queryJsApiTicketEnc(String openId,String url) {
+    public PaySignRes queryJsApiTicketEnc(String openId, String url) {
 
         //1.校验openId是否存在
-        flowTicketManager.checkOpenIdIsExpires(redisUtil.get(openId),openId);
+        flowTicketManager.checkOpenIdIsExpires(iRedisService.get(openId), openId);
 
         //2.获取access_token
         String accessToken = flowTicketManager.queryAccessToken();
@@ -67,7 +62,7 @@ public class FlowTicketService {
         String jsApiTicket = flowTicketManager.queryJssApiTicket(accessToken);
 
         //4.验证参数签名
-        PaySignRes paySignRes = flowTicketManager.getPaySignRes(jsApiTicket,url);
+        PaySignRes paySignRes = flowTicketManager.getPaySignRes(jsApiTicket, url);
 
         return paySignRes;
     }
