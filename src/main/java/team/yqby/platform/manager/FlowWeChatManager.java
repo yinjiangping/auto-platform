@@ -69,9 +69,10 @@ public class FlowWeChatManager {
      * @param flowStock 商品信息
      * @param productNo 手机号
      * @param openID    用户编号
+     * @param flowChannel 请求渠道号
      * @return
      */
-    public String createPayOrder(FlowStock flowStock, String productNo, String openID) {
+    public String createPayOrder(FlowStock flowStock, String productNo, String openID,String flowChannel) {
         FlowOrder flowOrder = new FlowOrder();
         flowOrder.setOrderId(NumberUtil.getOrderNoRandom());
         flowOrder.setOrderTime(new Date());
@@ -79,6 +80,7 @@ public class FlowWeChatManager {
         flowOrder.setOriginalCost(flowStock.getFlowOriginalCost());
         flowOrder.setCurrentCost(flowStock.getFlowCurrentCost());
         flowOrder.setPhone(productNo);
+        flowOrder.setFlowChannel(flowChan)
         flowOrder.setOpenId(openID);
         flowOrder.setOutterFlowId(flowStock.getOutterFlowId());
         flowOrder.setTransStatus(TransStatusEnum.INI.getStatus());

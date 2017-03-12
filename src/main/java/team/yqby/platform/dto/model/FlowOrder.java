@@ -65,4 +65,7 @@ public class FlowOrder extends FlowBaseInfo {
     /** 对账状态：0：初始化，1：对账成功 */
     private String checkStatus;
 
+    /** 请求渠道 */
+    private String flowChannel;
+
 }

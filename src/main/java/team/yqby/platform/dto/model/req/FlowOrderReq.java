@@ -38,4 +38,7 @@ public class FlowOrderReq extends FlowBaseInfo {
 
     /** 个数 */
     private Long count = 1L;
+
+    /** 请求渠道*/
+    private String flowChannel;
 }

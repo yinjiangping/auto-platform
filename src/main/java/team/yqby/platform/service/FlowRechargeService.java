@@ -47,7 +47,7 @@ public class FlowRechargeService {
         FlowStock flowStock = flowWeChatManager.checkGoodsPrice(flowOrderReq.getFlowID(), flowOrderReq.getFlowCurrentCost());
 
         //2.支付下单
-        String orderNo = flowWeChatManager.createPayOrder(flowStock, flowOrderReq.getPhone(), flowOrderReq.getOpenID());
+        String orderNo = flowWeChatManager.createPayOrder(flowStock, flowOrderReq.getPhone(), flowOrderReq.getOpenID(),flowOrderReq.getFlowChannel());
 
         //3.微信下单
         WeChatXmlUtil weChatXmlUtil = flowWeChatManager.createWeChatOrder(flowOrderReq.getOpenID(), orderNo, flowOrderReq.getFlowCurrentCost());
