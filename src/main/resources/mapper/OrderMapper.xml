@@ -11,7 +11,6 @@
     <result column="ORIGINAL_COST" jdbcType="BIGINT" property="originalCost" />
     <result column="CURRENT_COST" jdbcType="BIGINT" property="currentCost" />
     <result column="PHONE" jdbcType="VARCHAR" property="phone" />
-    <result column="FLOW_CHANNEL" jdbcType="VARCHAR" property="flowChannel" />
     <result column="OPEN_ID" jdbcType="VARCHAR" property="openId" />
     <result column="TRANS_STATUS" jdbcType="VARCHAR" property="transStatus" />
     <result column="PAY_REQ_TIME" jdbcType="TIMESTAMP" property="payReqTime" />
