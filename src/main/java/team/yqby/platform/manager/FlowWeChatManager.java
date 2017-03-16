@@ -80,7 +80,7 @@ public class FlowWeChatManager {
         flowOrder.setOriginalCost(flowStock.getFlowOriginalCost());
         flowOrder.setCurrentCost(flowStock.getFlowCurrentCost());
         flowOrder.setPhone(productNo);
-        flowOrder.setFlowChannel(flowChan)
+        flowOrder.setFlowChannel(flowChannel);
         flowOrder.setOpenId(openID);
         flowOrder.setOutterFlowId(flowStock.getOutterFlowId());
         flowOrder.setTransStatus(TransStatusEnum.INI.getStatus());
