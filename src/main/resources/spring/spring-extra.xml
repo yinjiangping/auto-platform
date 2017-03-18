@@ -25,7 +25,7 @@
 
     <mvc:default-servlet-handler />
     <mvc:resources mapping="/resources/**" location="/resources/"/>
-    <mvc:resources mapping="/images/**" location="/images/"/>
+    <mvc:resources mapping="/image/**" location="/image/"/>
     <mvc:resources mapping="/css/**" location="/css/"/>
     <mvc:resources mapping="/js/**" location="/js/"/>
 
@@ -37,4 +37,14 @@
 
     <bean class="org.springframework.web.servlet.mvc.support.ControllerClassNameHandlerMapping" />
 
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/**" />
+            <mvc:exclude-mapping path="/login" />
+            <mvc:exclude-mapping path="/css/**" />
+            <mvc:exclude-mapping path="/js/**" />
+            <mvc:exclude-mapping path="/image/**" />
+            <bean class="team.yqby.platform.interceptor.SessionInterceptor"></bean>
+        </mvc:interceptor>
+    </mvc:interceptors>
 </beans>

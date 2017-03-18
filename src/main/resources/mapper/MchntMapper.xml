@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="team.yqby.platform.mapper.MchntMapper">
+    <sql id="Base_Column_List">
+        ID,MCHNT_NAME, PROVINCE,CITY,ADDRESS, CHANNELID
+    </sql>
+    <sql id="insert_Column_List">
+        MCHNT_NAME, PROVINCE,CITY,ADDRESS, CHANNELID
+    </sql>
+
+    <resultMap id="refereeResultMap" type="team.yqby.platform.dto.model.MchntInfo">
+        <id property="id" column="ID"/>
+        <result property="mchntName" column="MCHNT_NAME"/>
+        <result property="province" column="PROVINCE"/>
+        <result property="city" column="CITY"/>
+        <result property="address" column="ADDRESS"/>
+        <result property="channelId" column="CHANNELID"/>
+    </resultMap>
+
+    <!--   根据id查询对应的数据信息 -->
+    <select id="findByNo" parameterType="string" resultMap="refereeResultMap">
+        select * from T_MCHNT_INFO where MCHNT_NAME=#{mchntName}
+    </select>
+
+    <!--    查询所有 数据 -->
+    <select id="getAll" resultMap="refereeResultMap">
+        select * from T_MCHNT_INFO
+    </select>
+
+    <!-- 添加数据信息 -->
+    <insert id="insert" parameterType="team.yqby.platform.dto.model.MchntInfo" useGeneratedKeys="true" keyProperty="id">
+        insert into T_MCHNT_INFO(<include refid="insert_Column_List"/>)
+        values (#{mchntName},#{province},#{city},#{address},#{channelId})
+    </insert>
+
+</mapper>

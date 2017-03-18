@@ -1,6 +1,6 @@
 <%@ page language="java" pageEncoding="UTF-8" contentType="text/html;charset=UTF-8" %>
 <!DOCTYPE html>
-<title>批量账单充值</title>
+<title>德佳通信平台</title>
 <link rel="stylesheet" href="${pageContext.request.contextPath}/css/jquery.nice-file-input.min.css" type="text/css"/>
 <link rel="stylesheet" href="${pageContext.request.contextPath}/css/common.css" type="text/css"/>
 <script src="${pageContext.request.contextPath}/js/msg-notify.js"></script>
@@ -185,9 +185,5 @@
     <div id="msg_content"></div>
 </div>
 
-<br>
-<br>
-<br>
-<div style="text-align: center">@2017 DeJia 沪ICP备12026958号 <a href="http://www.miitbeian.gov.cn" target="_blank">沪ICP备12026958号</a></div>
 </body>
 </html>

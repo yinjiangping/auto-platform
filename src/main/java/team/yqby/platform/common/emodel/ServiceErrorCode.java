@@ -24,6 +24,9 @@ public enum ServiceErrorCode {
     ERROR_CODE_A10010("A10010", "订单已支付成功"),
     ERROR_CODE_A10011("A10011", "已回调通知过"),
 
+    ERROR_CODE_A10012("A10012", "用户名不存在"),
+    ERROR_CODE_A10013("A10013", "用户名或密码有误"),
+
     ERROR_CODE_F99999("F99999", "服务器繁忙，请稍后重试!"),
     ERROR_CODE_F88888("F88888", "正在受理请求中"),
     ERROR_CODE_F777777("F77777", "当前无法操作");
