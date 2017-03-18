@@ -70,14 +70,15 @@
                 <div style="padding:30px;"><input type="submit" onclick="doUserLogin('userLogin')" class="button button-block bg-main text-big input-big" value="登录"></div>
                 <div class="text-center"><span id="errorMsg" style="cursor: pointer;color: red;vertical-align:middle;">${errorMsg}</span></div>
             </div>
-            </form>          
+            </form>
+            <br>
+            <br>
+            <br>
+            <div style="text-align: center">@2017 DeJia 沪ICP备12026958号 <a href="http://www.miitbeian.gov.cn" target="_blank">沪ICP备12026958号</a></div>
         </div>
     </div>
 </div>
-<br>
-<br>
-<br>
-<div style="text-align: center">@2017 DeJia 沪ICP备12026958号 <a href="http://www.miitbeian.gov.cn" target="_blank">沪ICP备12026958号</a></div>
+
 
 </body>
 </html>
