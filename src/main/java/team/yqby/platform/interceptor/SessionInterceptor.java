@@ -13,7 +13,9 @@ import java.util.Enumeration;
 
 @Slf4j
 public class SessionInterceptor implements HandlerInterceptor {
-    /**过滤不校验session接口列表**/
+    /**
+     * 过滤不校验session接口列表*
+     */
     private String noCheck = "/js/.*|/css/.*|/image/.*|/style/.*|/login.jsp|/upload|/queryMchnts|/queryOrderList|/queryBin|/order|/payCallBack|/bizBack|/getGrant|/queryOpenID|/paySign|/webSocket";
 
     private static final String LOGIN_URL = "/login";
@@ -27,11 +29,12 @@ public class SessionInterceptor implements HandlerInterceptor {
 
         HttpSession session = request.getSession(true);
 
-        if(visitUri.matches(noCheck)){
+        if (visitUri.matches(noCheck)) {
             Enumeration<String> e = request.getParameterNames();
-            while (e.hasMoreElements()){
+            while (e.hasMoreElements()) {
                 String value = request.getParameter(e.nextElement());
-                if(value.contains("<") || value.contains(">")){
+                if (value.contains("<") || value.contains(">")) {
+                    log.error("请求地址：{}，请求参数格式有误，参数:{}", visitUri, value);
                     response.sendRedirect(request.getSession().getServletContext().getContextPath() + LOGIN_URL);
                     return false;
                 }
@@ -41,11 +44,11 @@ public class SessionInterceptor implements HandlerInterceptor {
 
         UserInfo userInfo = (UserInfo) session.getAttribute(SystemConstant.SESSION_USER);
         if (userInfo == null) {
-            log.error("请求地址:{},用户长时间未登陆或在其它地方登陆，跳转到登陆页面",visitUri);
+            log.error("请求地址:{},用户长时间未登陆或在其它地方登陆，跳转到登陆页面", visitUri);
             response.sendRedirect(request.getSession().getServletContext().getContextPath() + LOGIN_URL);
             return false;
         }
-        log.info("登陆账号：{}，SESSION验证通过！",userInfo.getUserNo());
+        log.info("登陆账号：{}，SESSION验证通过！", userInfo.getUserNo());
         return true;
     }
 
