@@ -44,6 +44,11 @@
             <mvc:exclude-mapping path="/css/**" />
             <mvc:exclude-mapping path="/js/**" />
             <mvc:exclude-mapping path="/image/**" />
+            <mvc:exclude-mapping path="/*.html" />
+            <mvc:exclude-mapping path="/scripts/**" />
+            <mvc:exclude-mapping path="/styles/**" />
+            <mvc:exclude-mapping path="/webSocket" />
+            <mvc:exclude-mapping path="/upload" />
             <bean class="team.yqby.platform.interceptor.SessionInterceptor"></bean>
         </mvc:interceptor>
     </mvc:interceptors>

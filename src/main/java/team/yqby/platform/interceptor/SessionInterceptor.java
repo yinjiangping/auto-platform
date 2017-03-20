@@ -14,7 +14,7 @@ import java.util.Enumeration;
 @Slf4j
 public class SessionInterceptor implements HandlerInterceptor {
     /**过滤不校验session接口列表**/
-    private String noCheck = "/js/.*|/css/.*|/image/.*|/style/.*|/login.jsp|/upload|/queryMchnts|/queryOrderList|/queryBin|/order|/payCallBack|/bizBack|/getGrant|/queryOpenID|/paySign";
+    private String noCheck = "/js/.*|/css/.*|/image/.*|/style/.*|/login.jsp|/upload|/queryMchnts|/queryOrderList|/queryBin|/order|/payCallBack|/bizBack|/getGrant|/queryOpenID|/paySign|/webSocket";
 
     private static final String LOGIN_URL = "/login";
 
@@ -41,7 +41,7 @@ public class SessionInterceptor implements HandlerInterceptor {
 
         UserInfo userInfo = (UserInfo) session.getAttribute(SystemConstant.SESSION_USER);
         if (userInfo == null) {
-            log.error("用户长时间未登陆或在其它地方登陆，跳转到登陆页面");
+            log.error("请求地址:{},用户长时间未登陆或在其它地方登陆，跳转到登陆页面",visitUri);
             response.sendRedirect(request.getSession().getServletContext().getContextPath() + LOGIN_URL);
             return false;
         }
