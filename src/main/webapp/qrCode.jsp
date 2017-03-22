@@ -136,10 +136,10 @@
     }
     function createCode() {
         var mchntName = $("#mchntName").val();
-        var provinceId = $('#s1 option:selected').val();
-        var cityId = $('#s2 option:selected').val();
+        var province = $('#s1 option:selected').val();
+        var city = $('#s2 option:selected').val();
         var address = $("#address").val();
-        htmlobj = $.ajax({url: '${pageContext.request.contextPath}/createChannelId?mchntName=' + mchntName + '&province=' + provinceId + '&city=' + cityId + '&address=' + address, async: false});
+        htmlobj = $.ajax({url: '${pageContext.request.contextPath}/createChannelId?mchntName=' + encodeURI(mchntName) + '&province=' + encodeURI(province) + '&city=' + encodeURI(city) + '&address=' + encodeURI(address), async: false});
         var resQrCodeText = htmlobj.responseText;
         $("#result").text(resQrCodeText);
         if(resQrCodeText.indexOf('error') < 0){

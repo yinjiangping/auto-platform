@@ -21,6 +21,8 @@ public class SystemConstant {
 
     public final static String NO_TYPE = "未分配";
 
+    public final static String UTF_8="UTF-8";
+
     public final static String SESSION_USER = "session.user";
 
     public final static String WeChatUrl = "https://open.weixin.qq.com/connect/oauth2/authorize";
@@ -28,5 +30,7 @@ public class SystemConstant {
     public final static String homeUrl = "http%3A%2F%2Fwww.djtx.com.cn%2Fmain.html";
 
     public static final String APP_ID = "wx098de71c1f317199";
+
+    public static final String BILL_SOCKET_URL="http://www.djtx.com.cn/webSocket";
 
 }

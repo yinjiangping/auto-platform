@@ -1,3 +1,4 @@
+<%@ page import="team.yqby.platform.common.constant.SystemConstant" %>
 <%@ page language="java" pageEncoding="UTF-8" contentType="text/html;charset=UTF-8" %>
 <!DOCTYPE html>
 <title>德佳通信平台</title>
@@ -21,13 +22,13 @@
     });
     var ws;
     function connectChatServer(filePath) {
-        var localObj = window.location;
-        var contextPath = localObj.pathname.split("/")[1];
-        var basePath = "ws://" + localObj.host + "/" + contextPath;
-        if (basePath.charAt(basePath.length - 1) != "/") {
-            basePath = basePath + "/";
-        }
-        ws = new WebSocket(basePath + "webSocket");
+//        var localObj = window.location;
+//        var contextPath = localObj.pathname.split("/")[1];
+//        var basePath = "ws://" + localObj.host + "/" + contextPath;
+//        if (basePath.charAt(basePath.length - 1) != "/") {
+//            basePath = basePath + "/";
+//        }
+        ws = new WebSocket("<%=SystemConstant.BILL_SOCKET_URL %>");
         ws.binaryType = "arraybuffer";
         ws.onopen = function () {
             ws.send(filePath);

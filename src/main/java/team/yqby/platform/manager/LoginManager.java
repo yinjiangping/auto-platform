@@ -43,15 +43,16 @@ public class LoginManager {
     }
 
     public String createChannelId(String mchntName, String province, String city, String address) {
-        ParamManager.checkParam(mchntName,"商户名称");
-        ParamManager.checkParam(province,"省份");
-        ParamManager.checkParam(city,"城市");
-        ParamManager.checkParam(address,"详细地址");
-        String channelId = Joiner.on("").join(System.currentTimeMillis(), RandomStringUtils.randomNumeric(5));
+        ParamManager.checkParam(mchntName, "商户名称");
+        ParamManager.checkParam(province, "省份");
+        ParamManager.checkParam(city, "城市");
+        ParamManager.checkParam(address, "详细地址");
+        log.info("生成渠道编号请求参数:{},{},{},{}", mchntName, province, city, address);
+        String channelId = Joiner.on("").join(System.currentTimeMillis(), RandomStringUtils.randomNumeric(6));
         //判断商户信息是否存在
         MchntInfo mchntInfo = mchntMapper.findByNo(mchntName);
         if (mchntInfo != null) {
-           return mchntInfo.getChannelId();
+            return mchntInfo.getChannelId();
         }
         mchntInfo = new MchntInfo();
         mchntInfo.setMchntName(mchntName);

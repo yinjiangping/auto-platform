@@ -11,8 +11,10 @@ import org.springframework.web.servlet.ModelAndView;
 import team.yqby.platform.dto.model.UserInfo;
 import team.yqby.platform.exception.AutoPlatformException;
 import team.yqby.platform.manager.LoginManager;
+import team.yqby.platform.manager.ParamManager;
 
 import javax.servlet.http.HttpServletRequest;
+import java.net.URLDecoder;
 
 @Controller
 @Slf4j
@@ -46,7 +48,7 @@ public class LoginController {
     public String createChannelId(String mchntName, String province, String city, String address, HttpServletRequest request) {
         String channelId = "";
         try {
-            channelId = loginManager.createChannelId(mchntName, province, city, address);
+            channelId = loginManager.createChannelId(ParamManager.strDecode(mchntName), ParamManager.strDecode(province), ParamManager.strDecode(city), ParamManager.strDecode(address));
         } catch (Exception e) {
             log.error("Exception error,", e);
             return "valid param error";
