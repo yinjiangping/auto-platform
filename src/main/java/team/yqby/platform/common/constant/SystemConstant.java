@@ -31,6 +31,6 @@ public class SystemConstant {
 
     public static final String APP_ID = "wx098de71c1f317199";
 
-    public static final String BILL_SOCKET_URL="http://www.djtx.com.cn/webSocket";
+    public static final String BILL_SOCKET_URL="ws://www.djtx.com.cn/webSocket";
 
 }
